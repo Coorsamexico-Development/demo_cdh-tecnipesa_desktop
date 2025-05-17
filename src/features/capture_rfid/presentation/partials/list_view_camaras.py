@@ -2,21 +2,24 @@
 from PyQt6.QtWidgets import QWidget,QVBoxLayout,QScrollArea,QSizePolicy
 from PyQt6.QtCore import Qt
 from services.camara_service import CamaraInfo
-from src.features.capture_rfid.presentation.widgets.view_camara_item import ViewCamaraItem
+from features.capture_rfid.presentation.widgets.view_camara_item import ViewCamaraItem
 
 
 
-class ListViewCamara(QWidget):
+class ListViewCamaras(QWidget):
     def __init__(self, 
                  camaras: list[CamaraInfo]= [],
                  on_click=lambda x:None,
                  ):
         super().__init__()
+
+        self.setContentsMargins(0, 0, 0, 0)
         self._camaras = camaras
         self.on_click = on_click
         
         self.main_layout = QVBoxLayout()
         self.main_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -68,7 +71,6 @@ class ListViewCamara(QWidget):
                 index = index,
                 camara = camara,
                 on_click = self.on_click,
-                is_active = False
             )
             self.scroll_layout.addWidget(carama_item)
 

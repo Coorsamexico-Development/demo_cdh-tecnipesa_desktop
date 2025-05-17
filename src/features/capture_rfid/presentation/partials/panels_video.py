@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from PyQt6.QtWidgets import   QHBoxLayout, QFrame,QSizePolicy
 from features.shared.presentation.widgets.capture_video_widget import CaptureVideoWidget
+from features.capture_rfid.presentation.partials.list_view_camaras import ListViewCamaras
 
 
 
@@ -37,7 +38,12 @@ class PanelsVideo(QFrame):
                                                 on_save_frame=self.saveFrame,
 
                                                 )
-        horizontal_layout.addWidget(self.capture_video)
+        list_view_camaras = ListViewCamaras(
+            camaras=self.capture_video.cameras
+        )
+        horizontal_layout.addWidget(self.capture_video,15)
+        horizontal_layout.addWidget(list_view_camaras,5)
+
 
         self.setLayout(horizontal_layout)
 
