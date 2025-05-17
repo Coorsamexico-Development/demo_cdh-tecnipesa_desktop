@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QFrame,QSizePolicy,QListWidget,QListWidgetItem,QVBox
 from PyQt6.QtCore import QTimer
 
 from features.capture_rfid.infrastructure.models.scaneo_model import ScaneoModel
-from features.capture_rfid.presentation.components.scaneo_item import ScaneoItem
+from features.capture_rfid.presentation.widgets.scaneo_item import ScaneoItem
 
 
 

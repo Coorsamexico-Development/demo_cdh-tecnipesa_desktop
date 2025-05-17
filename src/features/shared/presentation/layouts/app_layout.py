@@ -7,12 +7,10 @@ from PyQt6.QtCore import Qt
 
 
 class AppLayout(QVBoxLayout):
-    def __init__(self, header:QWidget, sidebar:QWidget ,content:Union[QWidget, None] = None):
+    def __init__(self,sidebar:QWidget ,content:Union[QWidget, None] = None, footer:Union[QWidget, None]= None,):
         super().__init__()
         #add a vertial layout
         self.setContentsMargins(0, 0, 0, 0)
-        self.header = header
-
         #add a horizontal layout
         self.layout_body = QHBoxLayout()
         self.layout_body.setContentsMargins(0, 0, 0, 0)
@@ -25,8 +23,9 @@ class AppLayout(QVBoxLayout):
         #add content in horizontal layout
         self.content_section = content
 
-        self.addWidget(self.header)
         self.addLayout(self.layout_body)
+        if footer is not None: 
+            self.addWidget(footer)
 
     @property
     def content_section(self):
@@ -44,6 +43,7 @@ class AppLayout(QVBoxLayout):
 
 
     def _update_content(self, content:QWidget):
+
         content_section = self.layout_body.itemAt(1)
         if content_section is not None:
             content_section = content_section.widget()

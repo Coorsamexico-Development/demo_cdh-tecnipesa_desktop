@@ -2,7 +2,7 @@ import os
 from PyQt6.QtWidgets import QMainWindow,QTabWidget
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import QTimer
-from features.home.components.main_menu import MainMenu
+from features.home.widgets.main_menu import MainMenu
 from features.capture_rfid.presentation.screens.capture_rfid_screen import CaptureRfidScreen
 
 base_path = os.getcwd()
