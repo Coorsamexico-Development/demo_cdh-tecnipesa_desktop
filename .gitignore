@@ -1,0 +1,13 @@
+assets/productos
+trains_rnns
+datasets
+*.sqlite
+*.db
+*.pyc
+credentials.json
+.conda
+.env
+dist
+build
+*.zip
+./.env

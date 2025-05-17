@@ -1,0 +1,182 @@
+.tab {
+    background-color: #0277BD;
+    padding: 10px;
+}
+
+
+.menu-button {
+    /* background-color: white;
+    color: #090909; */
+    border-bottom: 1px solid #5b5b5b61;
+    margin: 0px;
+    padding: 10px 20px;
+    border-radius: 0px;
+    font-size: 16px;
+
+}
+
+.menu-button:hover {
+    background-color: #3e3c4a;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.menu-button.active {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+
+.active {
+    /* background-color: #07021f; */
+    /* color: #fff; */
+    border-radius: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.505);
+
+}
+
+.search_input {
+    padding: 10px 5px;
+}
+
+.input {
+    padding: 4px 2px;
+}
+
+.container_video {
+    background-color: #060507;
+    border-radius: 5px;
+}
+
+
+
+.button_icon {
+    padding: 10px 5px;
+    border-radius: 5px;
+}
+
+
+
+.notification_label {
+    /* background-color: white; */
+    /* color: rgba(0, 0, 0, 0.682); */
+    border-radius: 10px;
+    padding: 2px;
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.container_cards {
+    padding: 5px;
+    /* background-color: white; */
+    border-radius: 5px;
+}
+
+.card {
+    /* background-color: white; */
+    padding: 10px 5px;
+    border-radius: 10px;
+}
+
+.card_menu {
+    /* background-color: white; */
+    padding: 10px 5px;
+    border-radius: 10px;
+    border-width: 1px;
+}
+
+.custome_combobox {
+    padding: 5px 10px;
+}
+
+.custome_combobox:disabled {
+    background-color: #a1a1a1;
+    color: #646464
+}
+
+.custome_checkbox {
+    padding: 5px 10px;
+}
+
+.custome_checkbox:disabled {
+    color: #646464
+}
+
+.primary_button {
+    background-color: #0277BD;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 10px;
+}
+
+.primary_button:hover {
+    background-color: #449cce;
+}
+
+.secondary_button {
+    background-color: #cacaca;
+    padding: 5px 10px;
+    color: rgb(23, 25, 26);
+    border-radius: 10px;
+}
+
+.labe_capture {
+    background-color: black;
+    color: white;
+    font-weight: 600;
+    font-size: 20px;
+    padding: 0px;
+}
+
+.title {
+    /* color: black; */
+    font-weight: 700;
+    font-size: 20px;
+}
+
+
+
+.btn-table {
+    margin: 2px 10px;
+}
+
+.btn_add {
+    background-color: #02bd59;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.btn_add:hover {
+    background-color: #44af76;
+}
+
+
+.btn_remove {
+    background-color: #bdad02;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.btn_remove:hover {
+    background-color: #adaf44;
+}
+
+.badge {
+    background-color: #4acfea;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 4px;
+    font-size: 11px;
+    min-width: 15px;
+    min-height: 15px;
+    text-align: center;
+}
+
+.card_controls {
+    padding: 10px 5px;
+    border-width: 1px;
+    border-color: #3e3c4a;
+}
