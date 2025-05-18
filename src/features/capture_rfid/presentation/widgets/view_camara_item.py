@@ -3,29 +3,26 @@ from PyQt6.QtWidgets import   QVBoxLayout, QFrame,QSizePolicy
 from PyQt6.QtCore import QTimer, Qt
 from features.shared.presentation.widgets.capture_video_widget import CaptureVideoWidget
 from services.camara_service import CamaraInfo
+from features.shared.presentation.widgets.camera_viewer_widget import CameraViewerWidget
 
 class ViewCamaraItem(QFrame):
     def __init__(self, 
                  index:int,
                  camara:CamaraInfo, 
-                 on_click= lambda x:None,
-                 on_save_frame=lambda x,y,z,w:None
-                 
-                 
+                 on_click= lambda index,camara:None,                 
                  ):
         super().__init__()
         self.index = index
         self.camara = camara
         self.on_click = on_click
         self.is_active = False
-        self.on_save_frame= on_save_frame
         self._init_ui()
     
 
   
 
     def _init_ui(self):
-        self.setFixedHeight(400)
+        self.setFixedHeight(300)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setContentsMargins(0, 0, 0, 0)
         # self.clicked.connect(self._call_click)
@@ -33,21 +30,18 @@ class ViewCamaraItem(QFrame):
 
         layout = QVBoxLayout()
 
-        self.capture_video = CaptureVideoWidget(
+        self.camera_viewer = CameraViewerWidget(
                                                 title="SIN SEÑAL",
-                                                on_save_frame=self.on_save_frame
                                                 )
-        self.capture_video.setCamaraIndex(self.camara.camera_index)
 
-        layout.addWidget(self.capture_video)
+        layout.addWidget(self.camera_viewer)
         self.setLayout(layout)
 
 
-        QTimer.singleShot(0, self.capture_video.startCapture)
         
 
     def mousePressEvent(self, event):
-        self.on_click(self.camara)
+        self.on_click(self.index,self.camara)
         return super().mousePressEvent(event)
 
 
