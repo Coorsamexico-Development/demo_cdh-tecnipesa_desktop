@@ -73,8 +73,14 @@ class PanelsVideo(QFrame):
             camara_time.startCapture()
 
     
-    def save_frame(self):
-        pass
+    def save_frames(self):
+        resp = []
+        for camara_time in self.capture_camara_times:
+            resp.append(camara_time.takeFoto())
+            
+
+        return resp
+
 
    
 def update_images_viewer(frame, camara_viewers:list[CameraViewerWidget]= []):

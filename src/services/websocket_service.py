@@ -30,7 +30,7 @@ class WebsocketService():
 
     @staticmethod
     async def start_websocket_server():
-        async with serve(WebsocketService.websocket_handler, WebsocketService.host, 8765) as server:
+        async with serve(WebsocketService.websocket_handler, WebsocketService.host, WebsocketService.port) as server:
             await server.serve_forever()  # run forever
       
 
