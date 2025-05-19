@@ -53,7 +53,7 @@ class CaptureRfidLayout(QWidget):
 
     def on_finish_scan(self,scaneos: list[ScaneoModel]):
         
-        print(self.panels_videos.save_frames())
+        # print(self.panels_videos.save_frames())
         self.update_geos(gpo_configurations=[
             GpoConfigurationModel(
                 gpo=1,
