@@ -14,8 +14,11 @@ class ApiImpinjService(RequestService):
                  ) -> None:
          super().__init__(
               baseUrl=Enviroments.apiIMPINJ,
-              headers=headers
+              headers=headers,
+              auth=(
+                   Enviroments.IMPINJ_USER,
+                   Enviroments.IMPINJ_PASSWORD,
+              )
          )
 
 api_impinj = ApiImpinjService()
-basic_auth = HTTPBasicAuth(Enviroments.IMPINJ_USER, Enviroments.IMPINJ_PASSWORD)

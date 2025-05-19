@@ -59,8 +59,12 @@ class ListScaneos(QFrame):
                 self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
-        if scaneo in self.list_scaneos: #no agrega duplicados
+        exists = any(s.tag_inventory_event.epc == scaneo.tag_inventory_event.epc 
+                    and s.tag_inventory_event.frequency == scaneo.tag_inventory_event.frequency
+                    for s in self.list_scaneos)
+        if exists: #no agrega duplicados
             return
+        self.list_scaneos.append(scaneo)
         # Crear un QListWidgetItem
         item = QListWidgetItem(self.list_widget)
         # Crear un widget personalizado (un QLabel en este caso)

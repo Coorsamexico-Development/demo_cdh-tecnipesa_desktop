@@ -42,6 +42,7 @@ class CaptureRfidLayout(QWidget):
         if self.gpos_worker.has_error:
             error = self.gpos_worker.error
             QMessageBox.warning(self,error.title, error.message)
+            self.message_label.setText(error.message)
             return
         currentType = self.gpos_worker.type
 

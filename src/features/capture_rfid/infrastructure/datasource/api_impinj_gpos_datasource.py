@@ -1,6 +1,6 @@
 
 import json
-from services.api_impinj_service import api_impinj, basic_auth
+from services.api_impinj_service import api_impinj
 from features.shared.errors.request_error import RequestError
 from  requests.exceptions import ConnectTimeout
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
@@ -11,10 +11,14 @@ class ApiImpinjDatasource:
         pass
 
     def update_gpos(self, gpo_configurations:list[GpoConfigurationModel])->str:
-        data = [gpo_configuration.to_json() for gpo_configuration in gpo_configurations]
+        payload = json.dumps({
+            "gpoConfigurations": [gpo_configuration.to_json() for gpo_configuration in gpo_configurations]
+        })
+        
+        
 
         try:
-            response = api_impinj.put(f'/divice/gpos',auth=basic_auth, data=data)
+            response = api_impinj.put(f'divice/gpos', data=payload)
             if not response.ok:
                 error = json.loads(response.text)
                 title = "Error al actualizar la Reded Neuronal"
@@ -23,10 +27,9 @@ class ApiImpinjDatasource:
                 else:
                     message = response.reason
                 raise RequestError(title=title, message=message, code=response.status_code)
-            
-
 
             return  "OK"
+        
         except ConnectTimeout as e:
             raise RequestError(title="Sin conexion a la api",
                                 message="LLevo mucho tiempo la solicitud al servidor asegurate de tener conexicón a Internet", 

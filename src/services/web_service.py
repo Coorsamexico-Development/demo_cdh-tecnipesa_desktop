@@ -10,7 +10,7 @@ flask_app = Flask(__name__)
     
 # --- Flask App ---
 
-@flask_app.route('/webhook', methods=['GET', 'POST'])
+@flask_app.post('/webhook')
 def webhook():
     # Enviar mensaje a todos los WebSocket conectados
     dataJson =request.get_json()
@@ -22,6 +22,14 @@ def webhook():
         return
     asyncio.run(WebsocketService.send_ws_message(json.dumps(dataJson)))
     return "Exitoso"
+
+# @flask_app.put('/api/v1/divice/gpos')
+# def update_gpos():
+#     # Enviar mensaje a todos los WebSocket conectados
+#     data =request.data
+#     return "Exitoso"
+
+
 
 
 def run_flask():
