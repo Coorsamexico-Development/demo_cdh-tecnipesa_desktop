@@ -1,19 +1,11 @@
+import json
 import sys
 import threading
-import asyncio
-from websockets.asyncio.server import serve
-from websockets.asyncio.client import connect
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout
-from PyQt6.QtCore import pyqtSignal, QObject
-from flask import Flask
-from flask import request
-import base64
 
-# --- Señales para comunicar WebSocket con PyQt ---
-class Communicator(QObject):
-    message_received = pyqtSignal(str)
-
-communicator = Communicator()
+from services.websocket_service import WebsocketService, communicator
+from services.web_service import run_flask
+from features.capture_rfid.infrastructure.adapters.scaneo_adapter import ScaneoAdapter
 
 # --- PyQt6 GUI ---
 class MainWindow(QMainWindow):
@@ -27,70 +19,16 @@ class MainWindow(QMainWindow):
         # Conectar señal
         communicator.message_received.connect(self.update_label)
 
-    def update_label(self, message):
-        self.label.setText(f"Mensaje recibido: {message}")
+    def update_label(self, messageData):
+        dataJson = json.loads(messageData)
 
-# --- WebSocket Server ---
-connected_clients = set()
+        for scaneJson in dataJson:
+            scaneo = ScaneoAdapter.fromJson(scaneJson)
+            self.label.setText(f"EPC: {scaneo.tag_inventory_event.epc}")
+          
+        
 
-async def websocket_handler(websocket):
-    print("Entra el websocket_handler")
-    connected_clients.add(websocket)
-    try:
-        async for message in websocket:
-            await websocket.send(message)
-            print("Mensaje recibido en WebSocket:", message)
-            communicator.message_received.emit(message)
-    except:
-        pass
-    finally:
-        connected_clients.remove(websocket)
 
-async def start_websocket_server():
-    async with serve(websocket_handler, "localhost", 8765) as server:
-        print("Entrada al future")
-        await server.serve_forever()  # run forever
-    print("run_websocket_server")
-
-def run_websocket_server():
-    
-    asyncio.run(start_websocket_server())
-
-# --- Flask App ---
-flask_app = Flask(__name__)
-
-@flask_app.route('/webhook', methods=['GET', 'POST'])
-def webhook():
-    # Enviar mensaje a todos los WebSocket conectados
-    
-    dataJson =request.get_json()
-
-    if not dataJson:
-        return "No se envio JSON válido"
-    
-    firstData = dataJson[0]
-    tagInventory =  firstData.get('tagInventoryEvent')
-    epc = base64.urlsafe_b64decode(tagInventory.get('epc')).hex().upper()
-    print(epc)
-
-    asyncio.run(send_ws_message(f"EPC{epc}"))
-    return f"Mensaje enviado desde Flask al WebSocket {epc}."
-
-async def send_ws_message(message):
-    print("intento send ws message")
-    async with connect("ws://localhost:8765") as websocket:
-        await websocket.send(message)
-    # disconnected = []
-    # for ws in connected_clients:
-    #     try:
-    #         await ws.send(message)
-    #     except:
-    #         disconnected.append(ws)
-    # for ws in disconnected:
-    #     connected_clients.remove(ws)
-
-def run_flask():
-    flask_app.run(host="0.0.0.0",port=5000)
 
 
 class App(QApplication):
@@ -104,7 +42,7 @@ class App(QApplication):
 if True:
     # Iniciar Flask y WebSocket en hilos
     threading.Thread(target=run_flask, daemon=True).start()
-    threading.Thread(target=run_websocket_server, daemon=True).start()
+    threading.Thread(target=WebsocketService.run_websocket_server, daemon=True).start()
 
     # Iniciar PyQt en el hilo principal
     app = App(sys.argv)

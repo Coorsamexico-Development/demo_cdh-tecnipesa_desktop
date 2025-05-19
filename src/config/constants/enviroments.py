@@ -6,6 +6,9 @@ config = dotenv_values(".env")
 
 # Define the environment variables as module-level variables
 apiUrl = config['API_URL']
+apiArco = config['API_ARCO']
+websocket_host = config['WEBSOCKET_HOST']
+websocket_port = config['WEBSOCKET_PORT']
 # pusherAppId = config['PUSHER_APP_ID']
 # pusherAppkey = config['PUSHER_APP_KEY']
 # pusherCluster = config['PUSHER_APP_CLUSTER']

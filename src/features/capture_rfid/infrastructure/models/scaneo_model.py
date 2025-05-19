@@ -5,18 +5,18 @@ from features.capture_rfid.infrastructure.models.tag_inventory import TagInvento
 
 
 class ScaneoModel:
-    def __init__(self, timestamp:str, eventType:str, tagInventoryEvent:TagInventory
+    def __init__(self, timestamp:str, event_type:str, tag_inventory_event:TagInventory
                     ):
         self.timestamp = timestamp
-        self.eventType = eventType
-        self.tagInventoryEvent = tagInventoryEvent
+        self.event_type = event_type
+        self.tag_inventory_event = tag_inventory_event
 
     #make a to dict method
     def to_dict(self):
         return {
             'timestamp': self.timestamp,
-            'eventType': self.eventType,
-            'tagInventoryEvent': self.tagInventoryEvent.to_dict(),
+            'event_type': self.event_type,
+            'tag_inventory_event': self.tag_inventory_event.to_dict(),
         }
     
     def to_json(self):
