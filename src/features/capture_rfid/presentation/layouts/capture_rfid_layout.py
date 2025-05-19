@@ -60,7 +60,7 @@ class CaptureRfidLayout(QWidget):
                 state=GpoConfigurationModel.StateGeo.HIGH
             ),
             GpoConfigurationModel(
-                gpo=1,
+                gpo=2,
                 state=GpoConfigurationModel.StateGeo.LOW
             ),
         ])
