@@ -47,13 +47,14 @@ class PanelsVideo(QFrame):
         
        
         self.list_view_camaras = ListViewCamaras(
-            camaras=self.cameras
+            camaras=self.cameras,
+            on_click=self._start_camaras_time
         )
         horizontal_layout.addWidget(self.principal_camera_viewer,15)
         horizontal_layout.addWidget(self.list_view_camaras,5)
 
         self.setLayout(horizontal_layout)
-        QTimer.singleShot(150, self._start_camaras_time)
+        QTimer.singleShot(50, self._start_camaras_time)
         
   
     def _start_camaras_time(self, principal_index=0):
@@ -68,31 +69,18 @@ class PanelsVideo(QFrame):
             camara_viewers = [camara_viewer]
             if index == principal_index:
                 camara_viewers.append(self.principal_camera_viewer)
-            camara_time.on_update_frame = lambda frame: self.update_images_viewer(frame,camara_viewers)
+            camara_time.on_update_frame = lambda frame, camara_viewers=camara_viewers: update_images_viewer(frame=frame, camara_viewers=camara_viewers)
             camara_time.startCapture()
 
     
     def save_frame(self):
         pass
 
-    def set_principal_camara(self,index:int, camara:CamaraInfo):
-        if index > len(self.list_view_camaras.scroll_layout):
-            return
-       
-        camara_viewer_in_list:ViewCamaraItem =  self.list_view_camaras.scroll_layout.itemAt(index).widget()
-        camara_viewer:CameraViewerWidget = camara_viewer_in_list.camera_viewer
-
-
-        self.capture_camara_times[index].on_update_frame = lambda frame: self.update_images_viewer(frame,[
-        #    camara_viewer,
-        #    self.principal_camera_viewer,
-        ])
-
+   
+def update_images_viewer(frame, camara_viewers:list[CameraViewerWidget]= []):
     
-    def update_images_viewer(self,frame, camara_viewers:list[CameraViewerWidget]= []):
-        
-        for camara_viewer in camara_viewers:
-            camara_viewer.update_image(frame=frame)
+    for camara_viewer in camara_viewers:
+        camara_viewer.update_image(frame=frame)
 
 
 

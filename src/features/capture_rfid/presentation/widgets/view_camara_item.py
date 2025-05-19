@@ -9,7 +9,7 @@ class ViewCamaraItem(QFrame):
     def __init__(self, 
                  index:int,
                  camara:CamaraInfo, 
-                 on_click= lambda index,camara:None,                 
+                 on_click= lambda index:None,                 
                  ):
         super().__init__()
         self.index = index
@@ -41,24 +41,24 @@ class ViewCamaraItem(QFrame):
         
 
     def mousePressEvent(self, event):
-        self.on_click(self.index,self.camara)
+        self._call_click()
         return super().mousePressEvent(event)
 
 
     def _call_click(self):
         self.toggleActive()
-        self.on_click(self)
+        self.on_click(self.index)
 
 
     def toggleActive(self):
         self.is_active = not self.is_active
-        current_class = self.property('class')
-        if not self.is_active:
-            current_class  = current_class.replace(' active', '')
-        else:
-            current_class += ' active'
+        # current_class = self.property('class')
+        # if not self.is_active:
+        #     current_class  = current_class.replace(' active', '')
+        # else:
+        #     current_class += ' active'
             
-        self.setProperty('class', current_class)
-        #self.style().unpolish(self)
-        self.style().polish(self)
-        self.update()
+        # self.setProperty('class', current_class)
+        # #self.style().unpolish(self)
+        # self.style().polish(self)
+        # self.update()

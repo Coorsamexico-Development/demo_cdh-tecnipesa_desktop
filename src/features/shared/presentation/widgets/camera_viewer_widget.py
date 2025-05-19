@@ -4,13 +4,12 @@ from PyQt6.QtCore import Qt
 import cv2
 from PyQt6.QtGui import QImage, QPixmap
 
-from services.camara_service import CamaraInfo, get_camera_info
 import numpy as np
 
 
 class CameraViewerWidget(QFrame):
     def __init__(self, 
-                 title:str = "Abrir Camará",
+                 title:str = "SIN SEÑAL",
                  add_custome_mask= lambda frame: None,
                  with_mask_camara:bool = True
                  ):
@@ -83,8 +82,6 @@ class CameraViewerWidget(QFrame):
         self.video_label.setPixmap(QPixmap.fromImage(convert_to_Qt_format))
        
 
-
-    
     def mask_camara(self, frame:np.ndarray, 
                     w:int = 320, 
                     h:int = 480):
