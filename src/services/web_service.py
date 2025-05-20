@@ -23,7 +23,7 @@ def webhook():
     asyncio.run(WebsocketService.send_ws_message(json.dumps(dataJson)))
     return "Exitoso"
 
-# @flask_app.put('/api/v1/divice/gpos')
+# @flask_app.put('/api/v1/device/gpos')
 # def update_gpos():
 #     # Enviar mensaje a todos los WebSocket conectados
 #     data =request.data

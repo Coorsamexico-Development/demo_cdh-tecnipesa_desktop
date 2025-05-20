@@ -47,10 +47,11 @@ class ListScaneos(QFrame):
 
     def on_receive_scan(self, messageData):
         dataJson = json.loads(messageData)
-        if len(dataJson) > 0 and len(self.list_scaneos) == 0:
-             QTimer.singleShot(5000, self._finish_scan)
+      
 
         if self.captured_scaneos:
+            if  len(dataJson) > 0 and len(self.list_scaneos) == 0:
+                QTimer.singleShot(5000, self._finish_scan)
             for scaneJson in dataJson:
                 scaneo = ScaneoAdapter.fromJson(scaneJson)
                 self.add_scaneo_item(scaneo)
@@ -80,6 +81,3 @@ class ListScaneos(QFrame):
         except ValueError:
             pass
        
-
-
-      

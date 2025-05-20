@@ -12,13 +12,11 @@ class ApiImpinjDatasource:
 
     def update_gpos(self, gpo_configurations:list[GpoConfigurationModel])->str:
         payload = json.dumps({
-            "gpoConfigurations": [gpo_configuration.to_json() for gpo_configuration in gpo_configurations]
-        })
-        
-        
+            "gpoConfigurations": [gpo_configuration.to_dict() for gpo_configuration in gpo_configurations]
+        })   
 
         try:
-            response = api_impinj.put(f'divice/gpos', data=payload)
+            response = api_impinj.put('device/gpos', data=payload)
             if not response.ok:
                 error = json.loads(response.text)
                 title = "Error al actualizar la Reded Neuronal"
@@ -41,4 +39,3 @@ class ApiImpinjDatasource:
                                 code=500)
        
 
-   

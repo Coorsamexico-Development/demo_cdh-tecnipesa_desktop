@@ -1,5 +1,3 @@
-import os
-from typing import Union
 from PyQt6.QtWidgets import  QWidget,QLabel,QMessageBox
 from PyQt6.QtCore import  Qt
 from features.shared.presentation.layouts.app_layout import AppLayout
@@ -50,8 +48,8 @@ class CaptureRfidLayout(QWidget):
 
         if currentType == ImpinjGposWoker.Type.Update:
             self.message_label.setText(self.gpos_worker.resp)
-       
-        self.list_scaneos.captured_scaneos = True
+            self.list_scaneos.captured_scaneos = True
+
         self.message_label.setText('')
 
     def on_finish_scan(self,scaneos: list[ScaneoModel]):
