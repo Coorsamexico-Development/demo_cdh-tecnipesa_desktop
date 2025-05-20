@@ -46,11 +46,8 @@ class ListScaneos(QFrame):
         self.list_scaneos.clear()
 
     def on_receive_scan(self, messageData):
-        
-        
         dataJson = json.loads(messageData)
         if len(dataJson) > 0 and len(self.list_scaneos) == 0:
-             self.captured_scaneos = True
              QTimer.singleShot(5000, self._finish_scan)
 
         if self.captured_scaneos:

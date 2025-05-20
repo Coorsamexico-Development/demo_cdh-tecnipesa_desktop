@@ -14,6 +14,7 @@ from features.capture_rfid.infrastructure.models.scaneo_model import ScaneoModel
 
 
 
+
 class CaptureRfidLayout(QWidget):
     def __init__(self):
         super().__init__()
@@ -21,13 +22,14 @@ class CaptureRfidLayout(QWidget):
         self.message_label = QLabel("Camaras")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        sidebar = ListScaneos(
+        self.list_scaneos = ListScaneos(
             on_finish_scan=self.on_finish_scan
         )
         self.panels_videos = PanelsVideo()
+        self.index_color = 1
 
         app_layout = AppLayout(
-            sidebar=sidebar,
+            sidebar=self.list_scaneos,
             content=self.panels_videos,
             footer=self.message_label
         )
@@ -49,22 +51,30 @@ class CaptureRfidLayout(QWidget):
         if currentType == ImpinjGposWoker.Type.Update:
             self.message_label.setText(self.gpos_worker.resp)
        
-
+        self.list_scaneos.captured_scaneos = True
         self.message_label.setText('')
 
     def on_finish_scan(self,scaneos: list[ScaneoModel]):
         
         # print(self.panels_videos.save_frames())
-        self.update_geos(gpo_configurations=[
-            GpoConfigurationModel(
-                gpo=1,
-                state=GpoConfigurationModel.StateGeo.HIGH
-            ),
-            GpoConfigurationModel(
-                gpo=2,
-                state=GpoConfigurationModel.StateGeo.LOW
-            ),
-        ])
+        
+        if self.index_color > 7:
+            self.index_color = 1
+        self.update_geos(gpo_configurations=self.colorsLeds())
+        self.index_color += 1
+
+    def colorsLeds(self):
+       
+        bin_numers = list(bin(self.index_color)[2:].rjust(3, '0'))
+        leds = [GpoConfigurationModel(
+                gpo=index+1,
+                state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW
+            )  for index,bin_numer  in enumerate(bin_numers)]
+        
+        return leds
+
+       
+
 
 
     def update_geos(self,gpo_configurations:list[GpoConfigurationModel]):
