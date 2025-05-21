@@ -58,13 +58,13 @@ class CaptureRfidLayout(QWidget):
             # self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['green']))
             # self.list_scaneos.captured_scaneos = True
 
-        self.message_label.setText('')
+        # self.message_label.setText('')
 
 
     def _result_worker_gpos(self):
         if self.gpos_worker.has_error:
             error = self.gpos_worker.error
-            QMessageBox.warning(self,error.title, error.message)
+            # QMessageBox.warning(self,error.title, error.message)
             self.message_label.setText(error.message)
             return
         currentType = self.gpos_worker.type

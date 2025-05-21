@@ -62,8 +62,7 @@ class ListScaneos(QFrame):
                 self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
-        exists = any(s.tag_inventory_event.epc == scaneo.tag_inventory_event.epc 
-                    and s.tag_inventory_event.frequency == scaneo.tag_inventory_event.frequency
+        exists = any(s.tag_inventory_event.epc == scaneo.tag_inventory_event.epc
                     for s in self.list_scaneos)
         if exists: #no agrega duplicados
             return

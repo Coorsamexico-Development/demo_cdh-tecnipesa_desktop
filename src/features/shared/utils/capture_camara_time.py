@@ -16,7 +16,7 @@ class CaptureCameraTime:
                  auto_start:bool = False,
                  ):
         super().__init__()
-
+        self.frame = None
         self.camera = camera
         self.on_stop_record = on_stop_record
         self.on_update_frame = on_update_frame
