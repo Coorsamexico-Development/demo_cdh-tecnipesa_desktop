@@ -20,7 +20,7 @@ class CaptureRfidLayout(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.message_label = QLabel("Camaras")
+        self.message_label = QLabel("")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.list_scaneos = ListScaneos(
@@ -30,9 +30,9 @@ class CaptureRfidLayout(QWidget):
         self.panels_videos = PanelsVideo()
 
         app_layout = AppLayout(
+            header=self.message_label,
             sidebar=self.list_scaneos,
             content=self.panels_videos,
-            footer=self.message_label
         )
 
         self.setLayout(app_layout)

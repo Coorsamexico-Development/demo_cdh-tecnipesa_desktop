@@ -7,19 +7,25 @@ from PyQt6.QtCore import Qt
 
 
 class AppLayout(QVBoxLayout):
-    def __init__(self,sidebar:QWidget ,content:Union[QWidget, None] = None, footer:Union[QWidget, None]= None,):
+    def __init__(self,sidebar:QWidget ,content:Union[QWidget, None] = None, header:Union[QWidget, None]= None,):
         super().__init__()
         #add a vertial layout
         self.setContentsMargins(0, 0, 0, 0)
         self.setSpacing(0)
+
+        if header is not None: 
+            self.addWidget(header)
         #add a horizontal layout
         self.layout_body = QHBoxLayout()
         self.layout_body.setContentsMargins(0, 0, 0, 0)
         self.layout_body.setSpacing(0)
+        
+
 
         #add siderbar in horizontal layout
         self.sidebar = sidebar
-        
+        self.sidebar.setContentsMargins(0, 0, 0, 0)
+        self.sidebar.setProperty("class", "without_padding")
         self.sidebar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.layout_body.addWidget(self.sidebar,3)
 
@@ -27,9 +33,7 @@ class AppLayout(QVBoxLayout):
         self.content_section = content
 
         self.addLayout(self.layout_body)
-        if footer is not None: 
-            self.addWidget(footer)
-
+       
     @property
     def content_section(self):
         return self.layout_body.itemAt(1).widget()

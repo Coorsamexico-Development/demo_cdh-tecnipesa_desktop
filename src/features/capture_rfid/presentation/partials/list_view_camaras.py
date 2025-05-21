@@ -26,16 +26,20 @@ class ListViewCamaras(QWidget):
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.scroll_area.setContentsMargins(0, 0, 0, 0)
+    
         self.scroll_area.setProperty("class", "bg_dark")
         # Cea un widget contenedor para el QScrollArea
         scroll_content = QWidget()
         
-        scroll_content.setContentsMargins(0, 0, 0, 0)
         scroll_content.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        scroll_content.setContentsMargins(0, 0, 0, 0)
+        
         scroll_content.setProperty("class", "bg_dark")
 
         self.scroll_layout = QVBoxLayout(scroll_content)
         self.scroll_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
         self.scroll_layout.setContentsMargins(0, 0, 0, 0)
         self.scroll_layout.setSpacing(0)
         

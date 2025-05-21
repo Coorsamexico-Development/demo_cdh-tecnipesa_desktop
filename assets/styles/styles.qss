@@ -116,7 +116,9 @@
 .title {
     /* color: black; */
     font-weight: 400;
-    font-size: 10px;
+    font-size: 14px;
+    padding-left: 5px;
+    
 }
 
 
@@ -135,11 +137,14 @@
 }
 
 .bg_dark {
-    background-color: #282c30;
+    background-color: #050709;
+    padding: 0px;
+    margin: 0px;
 }
 
-.bg_red {
-    background-color: #a40e24;
+.without_padding {
+    border: 0px;
+    padding: 0px;
 }
 
 /* .badge {

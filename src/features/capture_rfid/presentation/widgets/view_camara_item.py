@@ -29,7 +29,7 @@ class ViewCamaraItem(QFrame):
         self.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
 
         layout = QVBoxLayout()
-
+        layout.setContentsMargins(0, 0, 0, 0)
         self.camera_viewer = CameraViewerWidget(
                                                 title="SIN SEÑAL",
                                                 )

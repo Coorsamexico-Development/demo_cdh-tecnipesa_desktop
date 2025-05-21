@@ -28,6 +28,7 @@ class ListScaneos(QFrame):
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setProperty('class', 'card')
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         label_title = QLabel("Lista de Escaneos")
         label_title.setProperty("class", 'title')
         layout.addWidget(label_title)
