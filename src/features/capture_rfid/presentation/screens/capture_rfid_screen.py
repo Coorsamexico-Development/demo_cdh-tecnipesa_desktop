@@ -5,12 +5,14 @@ from features.capture_rfid.presentation.layouts.capture_rfid_layout import Captu
 class CaptureRfidScreen(QWidget):
     def __init__(self):
         super().__init__()
-        self.layout_body = QVBoxLayout()
+        layout_body = QVBoxLayout()
+        layout_body.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout_body)
         self.toGo('capture_video')
-        self.setLayout(self.layout_body)
         
     def toGo(self, route_name:str, **params):
-        body = self.layout_body.itemAt(0)
+        layout = self.layout()
+        body = layout.itemAt(0)
         if body is not None:
             body = body.widget()
             body.deleteLater()
@@ -21,4 +23,4 @@ class CaptureRfidScreen(QWidget):
         #     body = ProductoDatasetLayout(**params)
 
         body.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.layout_body.addWidget(body)
+        layout.addWidget(body)

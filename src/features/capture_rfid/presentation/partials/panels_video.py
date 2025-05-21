@@ -34,6 +34,9 @@ class PanelsVideo(QFrame):
     def _init_ui(self):
         # UI layout
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.setFrameShape(QFrame.Shape.StyledPanel)
+        self.setContentsMargins(0, 0, 0, 0)
+      
         horizontal_layout = QHBoxLayout()
         horizontal_layout.setContentsMargins(0, 0, 0, 0)
         horizontal_layout.setSpacing(0)

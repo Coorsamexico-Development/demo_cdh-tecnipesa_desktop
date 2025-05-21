@@ -11,12 +11,15 @@ class AppLayout(QVBoxLayout):
         super().__init__()
         #add a vertial layout
         self.setContentsMargins(0, 0, 0, 0)
+        self.setSpacing(0)
         #add a horizontal layout
         self.layout_body = QHBoxLayout()
         self.layout_body.setContentsMargins(0, 0, 0, 0)
+        self.layout_body.setSpacing(0)
 
         #add siderbar in horizontal layout
         self.sidebar = sidebar
+        
         self.sidebar.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.layout_body.addWidget(self.sidebar,3)
 
