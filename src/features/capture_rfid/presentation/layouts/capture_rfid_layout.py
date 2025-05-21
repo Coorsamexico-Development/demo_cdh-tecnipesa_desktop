@@ -54,9 +54,12 @@ class CaptureRfidLayout(QWidget):
         if currentType == CdhTarimasWorker.Type.Store:
             self.message_label.setText("Guardado")
             
-
-            # self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['green']))
-            # self.list_scaneos.captured_scaneos = True
+            if 'red' in  self.cdh_worker.colorsResp:
+                self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['red']))
+            elif 'yellow' in  self.cdh_worker.colorsResp:
+                self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['yellow']))
+            elif 'green' in  self.cdh_worker.colorsResp:
+                self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['green']))
 
         # self.message_label.setText('')
 
@@ -71,7 +74,7 @@ class CaptureRfidLayout(QWidget):
 
         if currentType == ImpinjGposWoker.Type.Update:
             self.message_label.setText(self.gpos_worker.resp)
-            self.list_scaneos.captured_scaneos = True
+            #self.list_scaneos.captured_scaneos = True
 
         self.message_label.setText('')
 
