@@ -10,6 +10,7 @@ class ScaneoModel:
         self.timestamp = timestamp
         self.event_type = event_type
         self.tag_inventory_event = tag_inventory_event
+        self.image = None
 
     #make a to dict method
     def to_dict(self):

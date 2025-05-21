@@ -3,6 +3,7 @@ from PyQt6.QtCore import QTimer
 from pygrabber.dshow_graph import FilterGraph
 import numpy as np
 from datetime import datetime
+from typing import Tuple
 
 global start_time 
 start_time = datetime.now()
@@ -86,7 +87,7 @@ class CaptureCameraTime:
         self.is_recording = True
 
 
-    def takeFoto(self):
+    def takeFoto(self)->Tuple[np.ndarray,str]:
         return self.frame, self.getImageTime()
 
 

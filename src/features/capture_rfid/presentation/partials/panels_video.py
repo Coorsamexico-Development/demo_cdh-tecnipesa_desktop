@@ -8,7 +8,8 @@ from services.camara_service import CamaraInfo,get_camera_info
 from features.shared.utils.capture_camara_time import CaptureCameraTime
 from features.shared.presentation.widgets.camera_viewer_widget import CameraViewerWidget
 from features.capture_rfid.presentation.widgets.view_camara_item import ViewCamaraItem
-
+from typing import Tuple
+import numpy as np
 
 
 global start_time 
@@ -73,7 +74,7 @@ class PanelsVideo(QFrame):
             camara_time.startCapture()
 
     
-    def save_frames(self):
+    def save_frames(self)->list[Tuple[np.ndarray, str]]:
         resp = []
         for camara_time in self.capture_camara_times:
             resp.append(camara_time.takeFoto())

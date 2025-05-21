@@ -10,7 +10,7 @@ flask_app = Flask(__name__)
     
 # --- Flask App ---
 
-@flask_app.post('/webhook')
+@flask_app.post('/api/v1/webhook')
 def webhook():
     # Enviar mensaje a todos los WebSocket conectados
     dataJson =request.get_json()

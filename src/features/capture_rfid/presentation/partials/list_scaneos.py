@@ -8,16 +8,20 @@ from features.capture_rfid.infrastructure.models.scaneo_model import ScaneoModel
 from features.capture_rfid.presentation.widgets.scaneo_item import ScaneoItem
 from services.websocket_service import communicator
 from features.capture_rfid.infrastructure.adapters.scaneo_adapter import ScaneoAdapter
-
+import numpy as np
 
 class ListScaneos(QFrame):
-    def __init__(self,on_finish_scan: Callable[[list[ScaneoModel]],None] = lambda x:None):
+    def __init__(self,
+                 
+                 get_image: Callable[[], np.ndarray],
+                 on_finish_scan: Callable[[list[ScaneoModel]],None] = lambda x:None):
         super().__init__()
         self.list_scaneos:list[ScaneoModel] =  []
         self.on_finish_scan= on_finish_scan
         self.item_seleted = None
         self.scaneo_selected:Union[ ScaneoModel, None ] = None
         self.captured_scaneos = True
+        self.get_image = get_image
         self._init_ui()
 
     def _init_ui(self):
@@ -37,7 +41,7 @@ class ListScaneos(QFrame):
     
     def _finish_scan(self):
         self.captured_scaneos = False
-        self.on_finish_scan(self.list_scaneos)
+        self.on_finish_scan(self.list_scaneos.copy())
         self.clear_scaneos()
 
 
@@ -61,6 +65,9 @@ class ListScaneos(QFrame):
                     and s.tag_inventory_event.frequency == scaneo.tag_inventory_event.frequency
                     for s in self.list_scaneos)
         if exists: #no agrega duplicados
+            return
+        scaneo.image = self.get_image()
+        if scaneo.image is None:
             return
         self.list_scaneos.append(scaneo)
         # Crear un QListWidgetItem

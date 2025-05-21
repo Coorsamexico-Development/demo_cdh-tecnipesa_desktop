@@ -19,7 +19,7 @@ class ApiImpinjDatasource:
             response = api_impinj.put('device/gpos', data=payload)
             if not response.ok:
                 error = json.loads(response.text)
-                title = "Error al actualizar la Reded Neuronal"
+                title = "Error al actualizar leds"
                 if "message" in error:
                     message =error['message']
                 else:

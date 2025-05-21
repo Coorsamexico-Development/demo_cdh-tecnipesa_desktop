@@ -7,9 +7,12 @@ from features.capture_rfid.domain.usecases.impinj_gpos_usecase import ImpinjGpos
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
     GpoConfigurationModel)
 from features.capture_rfid.infrastructure.models.scaneo_model import ScaneoModel
+from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 
 
 
+import numpy as np
+from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWorker
 
 
 
@@ -21,10 +24,10 @@ class CaptureRfidLayout(QWidget):
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.list_scaneos = ListScaneos(
+            get_image=lambda: self.get_image(),
             on_finish_scan=self.on_finish_scan
         )
         self.panels_videos = PanelsVideo()
-        self.index_color = 1
 
         app_layout = AppLayout(
             sidebar=self.list_scaneos,
@@ -34,8 +37,28 @@ class CaptureRfidLayout(QWidget):
 
         self.setLayout(app_layout)
 
+        self.cdh_worker = CdhTarimasWorker()
+        
+        self.cdh_worker.task_complete.connect(self._result_worker_cdh)
         self.gpos_worker = ImpinjGposWoker()
         self.gpos_worker.task_complete.connect(self._result_worker_gpos)
+
+
+    def _result_worker_cdh(self):
+        if self.cdh_worker.has_error:
+            error = self.cdh_worker.error
+            self.message_label.setText(error.message)
+            return
+        currentType = self.cdh_worker.type
+
+        if currentType == CdhTarimasWorker.Type.Store:
+            self.message_label.setText("Guardado")
+            
+
+            # self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['green']))
+            # self.list_scaneos.captured_scaneos = True
+
+        self.message_label.setText('')
 
 
     def _result_worker_gpos(self):
@@ -53,17 +76,24 @@ class CaptureRfidLayout(QWidget):
         self.message_label.setText('')
 
     def on_finish_scan(self,scaneos: list[ScaneoModel]):
+        if len(scaneos) > 0:
+            self.message_label.setText("Guardando...")
+            self.cdh_worker.type = CdhTarimasWorker.Type.Store
+            self.cdh_worker.scaneos = scaneos
+            self.cdh_worker.start()
         
-        # print(self.panels_videos.save_frames())
-        
-        if self.index_color > 7:
-            self.index_color = 1
-        self.update_geos(gpo_configurations=self.colorsLeds())
-        self.index_color += 1
+        #self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['red']))
 
-    def colorsLeds(self):
+    def get_image(self)->np.ndarray:
+        images = self.panels_videos.save_frames()
+        if len(images) == 0:
+            return None
+        
+        return images[0][0]
+
+    def colorsLeds(self, num_color:int):
        
-        bin_numers = list(bin(self.index_color)[2:].rjust(3, '0'))
+        bin_numers = list(bin(num_color)[2:].rjust(3, '0'))
         leds = [GpoConfigurationModel(
                 gpo=index+1,
                 state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW
