@@ -18,21 +18,14 @@ class ApiLogerTarimasDatasource:
 
         try:
             response = api_cdh_service.post('logtarima', data=payload, files=files)
-            # if not response.ok:
-            #     error = json.loads(response.content)
-            #     title = "Error al guardar el log de la tarima"
-            #     if "message" in error:
-            #         message =error['message']
-            #     else:
-            #         message = response.reason
-            #     raise RequestError(title=title, message=message, code=response.status_code)
             
             response = json.loads(response.content)
             if "data" in response:
                 if "color" in response['data']:
                     color = response['data']['color']
                     return color
-                
+            if "color" in response:
+                return response['color']
          
             raise RequestError(title="Error al guardar el log de la tarima",
                                     message="No se ha podido guardar el log de la tarima", 
