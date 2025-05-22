@@ -12,8 +12,8 @@ class App(QApplication):
         super(App, self).__init__(sys_argv)
         #implement menu draw dataset
         self.main_window = MainScreen()
-        
-        QTimer.singleShot(1000,self.start_webserver)
+        #only for test local witout lector r700
+        #QTimer.singleShot(1000,self.start_webserver)
 
     
     def start_webserver(self):
