@@ -14,7 +14,7 @@ from features.capture_rfid.domain.workers.impinj_stream_worker import ImpinjStre
 class ListScaneos(QFrame):
     def __init__(self,
                  
-                 get_image: Callable[[], np.ndarray],
+                 get_images: Callable[[], list[np.ndarray]],
                  on_add_scaneo: Callable[[ScaneoModel],None] = lambda x:None 
                  ):
         super().__init__()
@@ -22,7 +22,7 @@ class ListScaneos(QFrame):
         self.on_add_scaneo= on_add_scaneo
         self.item_seleted = None
         self.scaneo_selected:Union[ ScaneoModel, None ] = None
-        self.get_image = get_image
+        self.get_images = get_images
         self._init_ui()
 
     def _init_ui(self):
@@ -63,8 +63,8 @@ class ListScaneos(QFrame):
                     for s in self.list_scaneos)
         if exists: #no agrega duplicados
             return
-        scaneo.image = self.get_image()
-        if scaneo.image is None:
+        scaneo.images = self.get_images()
+        if len(scaneo.images) == 0:
             return
             
 

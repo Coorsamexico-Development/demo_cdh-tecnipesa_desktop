@@ -26,8 +26,9 @@ class CdhTarimasWorker(QThread):
         try:
             color = self.api_cdh_tarimas.store_log(
                 tarima_epc=self.scaneo.tag_inventory_event.epc,
-                image=self.scaneo.image
+                images=self.scaneo.images
                 )
+            self.scaneo.images.clear()
             self.task_complete.emit(color)
         except RequestError as e:
             self.has_error = True

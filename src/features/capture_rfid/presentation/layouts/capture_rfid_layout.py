@@ -24,7 +24,7 @@ class CaptureRfidLayout(QWidget):
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.list_scaneos = ListScaneos(
-            get_image=lambda: self.get_image(),
+            get_images=lambda: self.get_images(),
             on_add_scaneo=self.on_add_scaneo
         )
         self.panels_videos = PanelsVideo()
@@ -47,7 +47,7 @@ class CaptureRfidLayout(QWidget):
 
     def _result_worker_cdh(self, color):
 
-        if self.times_led_changed > 1:
+        if self.times_led_changed > 10:
             return
         if color not in self.resp_colors:
             self.resp_colors.add(color)
@@ -79,12 +79,8 @@ class CaptureRfidLayout(QWidget):
             self.cdh_worker.scaneo = scaneo
             self.cdh_worker.start()
 
-    def get_image(self)->np.ndarray:
-        images = self.panels_videos.save_frames()
-        if len(images) == 0:
-            return None
-        
-        return images[0][0]
+    def get_images(self)->np.ndarray:
+        return self.panels_videos.save_frames()
     
     def update_color_led(self, color:str):
         self.times_led_changed += 1

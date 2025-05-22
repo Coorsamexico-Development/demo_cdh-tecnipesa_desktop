@@ -92,10 +92,13 @@ class PanelsVideo(QFrame):
         QTimer.singleShot(100, self._start_camaras_time)
 
 
-    def save_frames(self)->list[Tuple[np.ndarray, str]]:
+    def save_frames(self)->list[np.ndarray]:
         resp = []
         for camara_time in self.capture_camara_times:
-            resp.append(camara_time.takeFoto())
+            frame = camara_time.takeFoto()
+            if frame is None:
+                continue
+            resp.append(frame)
             
 
         return resp

@@ -12,9 +12,9 @@ class ApiLogerTarimasDatasource:
     def __init__(self):
         pass
 
-    def store_log(self, tarima_epc:str, image: np.ndarray)->str:
+    def store_log(self, tarima_epc:str, images: np.ndarray)->str:
         payload = {'token_tag': tarima_epc}
-        files= {'image': ('image.jpg', imageToBytesIO(image), 'image/jpeg')}
+        files= {'image[]': (f'image_{index}.jpg', imageToBytesIO(image), 'image/jpeg') for index,image in enumerate(images)}
 
         try:
             response = api_cdh_service.post('logtarima', data=payload, files=files)

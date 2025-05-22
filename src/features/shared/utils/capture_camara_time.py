@@ -87,8 +87,8 @@ class CaptureCameraTime:
         self.is_recording = True
 
 
-    def takeFoto(self)->Tuple[np.ndarray,str]:
-        return self.frame, self.getImageTime()
+    def takeFoto(self)->np.ndarray:
+        return self.frame
 
 
     def getImageTime(self)->str:
