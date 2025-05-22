@@ -1,11 +1,10 @@
 from PyQt6.QtWidgets import  QWidget,QLabel
-from PyQt6.QtCore import  Qt
+from PyQt6.QtCore import QTimer,Qt
 from features.shared.presentation.layouts.app_layout import AppLayout
 from features.capture_rfid.presentation.partials.list_scaneos import ListScaneos
 from features.capture_rfid.presentation.partials.panels_video import PanelsVideo
 from features.capture_rfid.domain.usecases.impinj_gpos_usecase import ImpinjGposWoker
-from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
-    GpoConfigurationModel)
+from features.capture_rfid.infrastructure.models.gpo_configuration_model import GpoConfigurationModel
 from features.capture_rfid.infrastructure.models.scaneo_model import ScaneoModel
 from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 
@@ -13,6 +12,7 @@ from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 
 import numpy as np
 from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWorker
+
 
 
 
@@ -25,9 +25,10 @@ class CaptureRfidLayout(QWidget):
 
         self.list_scaneos = ListScaneos(
             get_image=lambda: self.get_image(),
-            on_finish_scan=self.on_finish_scan
+            on_add_scaneo=self.on_add_scaneo
         )
         self.panels_videos = PanelsVideo()
+        self.resp_colors = set()
 
         app_layout = AppLayout(
             header=self.message_label,
@@ -44,51 +45,42 @@ class CaptureRfidLayout(QWidget):
         self.gpos_worker.task_complete.connect(self._result_worker_gpos)
 
 
-    def _result_worker_cdh(self):
-        if self.cdh_worker.has_error:
-            error = self.cdh_worker.error
-            self.message_label.setText(error.message)
-            
-            self.list_scaneos.captured_scaneos = True
-            return
-        currentType = self.cdh_worker.type
+    def _result_worker_cdh(self, color):
+        # if self.cdh_worker.has_error:
+        #     error = self.cdh_worker.error
+        #     self.message_label.setText(error.message)
+        #     return
+        # self.message_label.setText("Guardado")
+        print("Color recibido:", color)
+        if color not in self.resp_colors:
+            self.resp_colors.add(color)
+            if color == 'red' or (color == 'yellow' and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
+                self.update_color_led(color)
 
-        if currentType == CdhTarimasWorker.Type.Store:
-            self.message_label.setText("Guardado")
-            
-            if 'red' in  self.cdh_worker.colorsResp:
-                self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['red']))
-            elif 'yellow' in  self.cdh_worker.colorsResp:
-                self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['yellow']))
-            elif 'green' in  self.cdh_worker.colorsResp:
-                self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['green']))
+        
 
         # self.message_label.setText('')
 
 
     def _result_worker_gpos(self):
-        self.list_scaneos.captured_scaneos = True
-        if self.gpos_worker.has_error:
-            error = self.gpos_worker.error
-            # QMessageBox.warning(self,error.title, error.message)
-            self.message_label.setText(error.message)
-            return
-        currentType = self.gpos_worker.type
+        pass
+        # if self.gpos_worker.has_error:
+        #     error = self.gpos_worker.error
+        #     # QMessageBox.warning(self,error.title, error.message)
+        #     self.message_label.setText(error.message)
+        #     return
+        # currentType = self.gpos_worker.type
 
-        if currentType == ImpinjGposWoker.Type.Update:
-            self.message_label.setText(self.gpos_worker.resp)
+        # if currentType == ImpinjGposWoker.Type.Update:
+        #     self.message_label.setText(self.gpos_worker.resp)
             
 
-        self.message_label.setText('')
+        # self.message_label.setText('')
 
-    def on_finish_scan(self,scaneos: list[ScaneoModel]):
-        if len(scaneos) > 0:
-            self.message_label.setText("Guardando...")
-            self.cdh_worker.type = CdhTarimasWorker.Type.Store
-            self.cdh_worker.scaneos = scaneos
+    def on_add_scaneo(self,scaneo:ScaneoModel):
+            # self.message_label.setText("Guardando...")
+            self.cdh_worker.scaneo = scaneo
             self.cdh_worker.start()
-        
-        #self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['red']))
 
     def get_image(self)->np.ndarray:
         images = self.panels_videos.save_frames()
@@ -96,6 +88,16 @@ class CaptureRfidLayout(QWidget):
             return None
         
         return images[0][0]
+    
+    def update_color_led(self, color:str):
+        self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED[color]))
+        QTimer.singleShot(2000, self.off_leds)
+
+    def off_leds(self):
+        self.list_scaneos.clear_scaneos()
+        self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['off']))
+        self.resp_colors.clear()
+        # self.message_label.setText("")
 
     def colorsLeds(self, num_color:int):
        

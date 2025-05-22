@@ -6,16 +6,14 @@ from features.shared.errors.request_error import RequestError
 
 
 class ImpinjStreamWorker(QThread):
-    new_data = pyqtSignal()
-    error = pyqtSignal()
+    new_data = pyqtSignal(str)
+    error = pyqtSignal(RequestError)
 
     
 
     def run(self):
         try:
             with api_impinj.get('/data/stream', stream=True) as response:
-               
-
                 for line in response.iter_lines():
                     if line:
                         self.new_data.emit(line.decode('utf-8'))

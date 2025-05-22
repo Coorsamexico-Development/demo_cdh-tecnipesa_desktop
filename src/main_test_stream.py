@@ -3,10 +3,11 @@ from services.api_impinj_service import api_impinj
 from features.shared.errors.request_error import RequestError
 
 try:
-    with api_impinj.get('/data/stream', stream=True) as response:
+    with api_impinj.get('data/stream', stream=True) as response:
         for line in response.iter_lines():
             if line:
                 print(line.decode('utf-8'))
+                print("-------------------------------------------------")
     
 except ConnectTimeout as e:
     print(RequestError(title="Sin conexion a la api",

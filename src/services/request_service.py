@@ -21,9 +21,8 @@ class RequestService():
 
 
 
-    def get(self,url, params = None, data = None):
-
-      return self.request.get(f"{self.baseUrl}/{url}", headers = self.headers, params = params, data = data)
+    def get(self,url, params = None, data = None, stream = None):
+      return self.request.get(f"{self.baseUrl}/{url}", headers = self.headers, params = params, data = data, stream = stream)
 
 
     def post(self, url, params = None, data = None, files = None):

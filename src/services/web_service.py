@@ -32,6 +32,7 @@ def webhook():
 def update_gpos():
     # Enviar mensaje a todos los WebSocket conectados
     data =request.data
+    print("gpos response___________________")
     return "Exitoso"
 
 
@@ -39,9 +40,17 @@ def update_gpos():
 def stream():
     # Enviar mensaje a todos los WebSocket conectados
     def generate():
-        for i in range(10):
+        while True:
             data = {
-                "message": f"Mensaje {i}"
+                "timestamp": "2025-05-17T16:03:13.944189383Z",
+                "eventType": "tagInventory",
+                "tagInventoryEvent": {
+                    "epc": "4oARkaUDAGXybMv_",
+                    "antennaPort": 1,
+                    "peakRssiCdbm": -7300,
+                    "frequency": 919750,
+                    "transmitPowerCdbm": 3000
+                }
             }
             yield json.dumps(data) + "\n"
             time.sleep(1)
