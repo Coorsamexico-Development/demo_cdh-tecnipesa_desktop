@@ -19,7 +19,7 @@ from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWo
 class CaptureRfidLayout(QWidget):
     def __init__(self):
         super().__init__()
-
+        self.times_led_changed = 0
         self.message_label = QLabel("")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -46,12 +46,15 @@ class CaptureRfidLayout(QWidget):
 
 
     def _result_worker_cdh(self, color):
+
+        if self.times_led_changed > 5:
+            return 
         # if self.cdh_worker.has_error:
         #     error = self.cdh_worker.error
         #     self.message_label.setText(error.message)
         #     return
         # self.message_label.setText("Guardado")
-        print("Color recibido:", color)
+        # print("Color recibido:", color)
         if color not in self.resp_colors:
             self.resp_colors.add(color)
             if color == 'red' or (color == 'yellow' and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
@@ -90,6 +93,7 @@ class CaptureRfidLayout(QWidget):
         return images[0][0]
     
     def update_color_led(self, color:str):
+        self.times_led_changed += 1
         self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED[color]))
         QTimer.singleShot(2000, self.off_leds)
 

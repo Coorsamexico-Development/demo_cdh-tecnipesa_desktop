@@ -13,7 +13,7 @@ class App(QApplication):
         #implement menu draw dataset
         self.main_window = MainScreen()
         
-        QTimer.singleShot(1000,self.start_webserver)
+        # QTimer.singleShot(1000,self.start_webserver)
 
     
     def start_webserver(self):
