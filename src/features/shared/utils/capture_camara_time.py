@@ -27,7 +27,8 @@ class CaptureCameraTime:
         # total_resolution = len(self.camera.resolutions)
         # if total_resolution > 0:
         for resolution in self.camera.resolutions:
-            if resolution.height == 720:
+            print(resolution.height)
+            if resolution.height >= 720:
                 self.setResolutionIndex(resolution.index)
                 break
 

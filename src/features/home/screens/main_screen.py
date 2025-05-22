@@ -1,9 +1,12 @@
 import os
-from PyQt6.QtWidgets import QMainWindow,QTabWidget
+from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import QTimer
 from features.home.widgets.main_menu import MainMenu
 from features.capture_rfid.presentation.screens.capture_rfid_screen import CaptureRfidScreen
+from features.capture_rfid.infrastructure.datasource.api_impinj_gpos_datasource import (
+    ApiImpinjDatasource)
+from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
+    GpoConfigurationModel)
 
 base_path = os.getcwd()
 
@@ -31,6 +34,21 @@ class MainScreen(QMainWindow):
     def apply_styles(self, qss_file):
         with open(qss_file, "r") as f:
             self.setStyleSheet(f.read())
+
+    def closeEvent(self, event):
+        datasource = ApiImpinjDatasource()
+        datasource.update_gpos(gpo_configurations=self.offLeds())
+
+
+    def offLeds(self):
+        bin_numers = list("000")
+        leds = [GpoConfigurationModel(
+                gpo=index+1,
+                state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW
+            )  for index,bin_numer  in enumerate(bin_numers)]
+        
+        return leds
+        
 
     # def add_tabs(self):
       
