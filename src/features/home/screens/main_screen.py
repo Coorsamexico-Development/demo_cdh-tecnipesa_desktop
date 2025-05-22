@@ -36,8 +36,10 @@ class MainScreen(QMainWindow):
             self.setStyleSheet(f.read())
 
     def closeEvent(self, event):
+        print("apagando luces....")
         datasource = ApiImpinjDatasource()
         datasource.update_gpos(gpo_configurations=self.offLeds())
+        print("luces apagadas")
 
 
     def offLeds(self):
