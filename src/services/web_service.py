@@ -1,10 +1,10 @@
 import asyncio
-from flask import Flask
+from flask import Flask,Response
 from flask import request
 import json
 from services.websocket_service import WebsocketService
 from PyQt6.QtCore import pyqtSignal, QObject
-
+import time
 class Communicator(QObject):
     message_received = pyqtSignal(str)
 
@@ -34,6 +34,18 @@ def update_gpos():
     data =request.data
     return "Exitoso"
 
+
+@flask_app.get('/api/v1/data/stream')
+def stream():
+    # Enviar mensaje a todos los WebSocket conectados
+    def generate():
+        for i in range(10):
+            data = {
+                "message": f"Mensaje {i}"
+            }
+            yield json.dumps(data) + "\n"
+            time.sleep(1)
+    return Response(generate(), mimetype='text/event-stream')
 
 
 
