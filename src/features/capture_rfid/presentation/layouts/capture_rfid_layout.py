@@ -47,8 +47,8 @@ class CaptureRfidLayout(QWidget):
 
     def _result_worker_cdh(self, color):
 
-        if self.times_led_changed > 10:
-            return
+        # if self.times_led_changed > 10:
+        #     return
         if color not in self.resp_colors:
             self.resp_colors.add(color)
             if color == 'red' or (color == 'yellow' and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
