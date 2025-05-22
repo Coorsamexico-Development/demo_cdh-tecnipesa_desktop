@@ -43,7 +43,8 @@ class PanelsVideo(QFrame):
         horizontal_layout.setContentsMargins(0, 0, 0, 0)
         horizontal_layout.setSpacing(0)
 
-        self.cameras: list[CamaraInfo] = get_camera_info()
+        
+        self.cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index > 1]
 
         self.capture_camara_times= [CaptureCameraTime(camera=camera) for camera in self.cameras]
 

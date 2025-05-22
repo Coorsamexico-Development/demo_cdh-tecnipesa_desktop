@@ -47,14 +47,8 @@ class CaptureRfidLayout(QWidget):
 
     def _result_worker_cdh(self, color):
 
-        if self.times_led_changed > 5:
-            return 
-        # if self.cdh_worker.has_error:
-        #     error = self.cdh_worker.error
-        #     self.message_label.setText(error.message)
-        #     return
-        # self.message_label.setText("Guardado")
-        # print("Color recibido:", color)
+        if self.times_led_changed > 1:
+            return
         if color not in self.resp_colors:
             self.resp_colors.add(color)
             if color == 'red' or (color == 'yellow' and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
@@ -95,7 +89,7 @@ class CaptureRfidLayout(QWidget):
     def update_color_led(self, color:str):
         self.times_led_changed += 1
         self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED[color]))
-        QTimer.singleShot(2000, self.off_leds)
+        QTimer.singleShot(3000, self.off_leds)
 
     def off_leds(self):
         self.list_scaneos.clear_scaneos()
@@ -105,7 +99,7 @@ class CaptureRfidLayout(QWidget):
 
     def colorsLeds(self, num_color:int):
        
-        bin_numers = list(bin(num_color)[2:].rjust(3, '0'))
+        bin_numers = list(bin(num_color)[2:].rjust(2, '0'))
         leds = [GpoConfigurationModel(
                 gpo=index+1,
                 state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW

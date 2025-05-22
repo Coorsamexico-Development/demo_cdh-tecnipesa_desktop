@@ -23,7 +23,7 @@ class ViewCamaraItem(QFrame):
 
     def _init_ui(self):
         # print(self.camara.resolutions)
-        self.setFixedHeight(200)
+        self.setFixedHeight(150)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setContentsMargins(0, 0, 0, 0)
         # self.clicked.connect(self._call_click)
