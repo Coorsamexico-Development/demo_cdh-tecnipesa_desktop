@@ -24,9 +24,9 @@ class CaptureCameraTime:
         self.graph = FilterGraph()
         self.is_recording = False
         self.capture_started = False
-
-        if len(self.camera.resolutions) > 0:
-            self.setResolutionIndex(self.camera.resolutions[0].index)
+        total_resolution = len(self.camera.resolutions)
+        if total_resolution > 0:
+            self.setResolutionIndex(self.camera.resolutions[total_resolution-1].index)
 
         self.timer = QTimer()
 
