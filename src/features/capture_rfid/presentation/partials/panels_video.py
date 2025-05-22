@@ -11,6 +11,8 @@ from features.capture_rfid.presentation.widgets.view_camara_item import ViewCama
 from typing import Tuple
 import numpy as np
 
+from pygrabber.dshow_graph import FilterGraph
+
 
 global start_time 
 start_time = datetime.now()
@@ -58,7 +60,7 @@ class PanelsVideo(QFrame):
         horizontal_layout.addWidget(self.list_view_camaras,5)
 
         self.setLayout(horizontal_layout)
-        QTimer.singleShot(50, self._start_camaras_time)
+        QTimer.singleShot(150, self._stop_camaras)
         
   
     def _start_camaras_time(self, principal_index=0):
@@ -77,6 +79,18 @@ class PanelsVideo(QFrame):
             camara_time.startCapture()
 
     
+
+    def _stop_camaras(self):
+       
+        for camara in self.cameras:
+            graph = FilterGraph()
+            graph.add_video_input_device(camara.camera_index)
+            graph.stop()
+            graph.remove_filters()
+        
+        QTimer.singleShot(100, self._start_camaras_time)
+
+
     def save_frames(self)->list[Tuple[np.ndarray, str]]:
         resp = []
         for camara_time in self.capture_camara_times:

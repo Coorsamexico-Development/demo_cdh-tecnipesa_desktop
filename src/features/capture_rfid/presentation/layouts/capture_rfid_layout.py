@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import  QWidget,QLabel,QMessageBox
+from PyQt6.QtWidgets import  QWidget,QLabel
 from PyQt6.QtCore import  Qt
 from features.shared.presentation.layouts.app_layout import AppLayout
 from features.capture_rfid.presentation.partials.list_scaneos import ListScaneos
@@ -48,6 +48,8 @@ class CaptureRfidLayout(QWidget):
         if self.cdh_worker.has_error:
             error = self.cdh_worker.error
             self.message_label.setText(error.message)
+            
+            self.list_scaneos.captured_scaneos = True
             return
         currentType = self.cdh_worker.type
 
@@ -65,6 +67,7 @@ class CaptureRfidLayout(QWidget):
 
 
     def _result_worker_gpos(self):
+        self.list_scaneos.captured_scaneos = True
         if self.gpos_worker.has_error:
             error = self.gpos_worker.error
             # QMessageBox.warning(self,error.title, error.message)
@@ -74,7 +77,7 @@ class CaptureRfidLayout(QWidget):
 
         if currentType == ImpinjGposWoker.Type.Update:
             self.message_label.setText(self.gpos_worker.resp)
-            #self.list_scaneos.captured_scaneos = True
+            
 
         self.message_label.setText('')
 

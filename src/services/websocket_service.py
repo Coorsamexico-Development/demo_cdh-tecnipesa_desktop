@@ -24,7 +24,7 @@ class WebsocketService():
         try:
             async for message in websocket:
                 communicator.message_received.emit(message)
-                await websocket.send(message)
+                # await websocket.send(message)
         except:
             print("Error websocket")
 

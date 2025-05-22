@@ -3,7 +3,12 @@ from flask import Flask
 from flask import request
 import json
 from services.websocket_service import WebsocketService
+from PyQt6.QtCore import pyqtSignal, QObject
 
+class Communicator(QObject):
+    message_received = pyqtSignal(str)
+
+communicator = Communicator()
 
 
 flask_app = Flask(__name__) 

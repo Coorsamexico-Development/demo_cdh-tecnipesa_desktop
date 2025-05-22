@@ -1,6 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from features.home.screens.main_screen import MainScreen
+from PyQt6.QtCore import QTimer
 
 import threading
 from services.websocket_service import WebsocketService
@@ -11,11 +12,18 @@ class App(QApplication):
         super(App, self).__init__(sys_argv)
         #implement menu draw dataset
         self.main_window = MainScreen()
+        
+        QTimer.singleShot(1000,self.start_webserver)
+
+    
+    def start_webserver(self):
+        threading.Thread(target=run_flask, daemon=True).start()
+        threading.Thread(target=WebsocketService.run_websocket_server, daemon=True).start()
+    
 
 
 if __name__ == '__main__':
-    threading.Thread(target=run_flask, daemon=True).start()
-    threading.Thread(target=WebsocketService.run_websocket_server, daemon=True).start()
+    
     
     app = App(sys.argv)
     #set window full screen
