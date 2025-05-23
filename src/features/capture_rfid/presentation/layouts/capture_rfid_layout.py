@@ -67,7 +67,7 @@ class CaptureRfidLayout(QWidget):
     def _result_worker_gpos(self):
 
         if self.gpos_worker.color != 'off':
-            QTimer.singleShot(2000, lambda: self.off_leds())
+            QTimer.singleShot(3000, lambda: self.off_leds())
 
         self.message_label.setText("")    
 
