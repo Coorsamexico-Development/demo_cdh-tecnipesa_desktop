@@ -4,9 +4,9 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('.env','..\\'),
-        ('assets\\icons\\logo.png','..\\assets\\icons'),
-        ('assets\\styles\\styles.qss','..\\assets\\styles'),
+        ('.env','.'),
+        ('assets\\icons\\logo.png','assets\\icons'),
+        ('assets\\styles\\styles.qss','assets\\styles'),
     ],
     hiddenimports=[],
     hookspath=[],
