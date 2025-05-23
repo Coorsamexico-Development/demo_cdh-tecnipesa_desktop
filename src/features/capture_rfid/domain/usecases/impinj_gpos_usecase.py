@@ -5,6 +5,7 @@ from features.capture_rfid.infrastructure.models.gpo_configuration_model import 
     GpoConfigurationModel)
 from features.capture_rfid.infrastructure.datasource.api_impinj_gpos_datasource import (
     ApiImpinjDatasource)
+from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 
 class ImpinjGposUseCase:
     def __init__(self, datasource:ApiImpinjDatasource= ApiImpinjDatasource()):
@@ -19,23 +20,29 @@ class ImpinjGposUseCase:
 class ImpinjGposWoker(QThread):
     task_complete = pyqtSignal()
 
-    class Type(enum.Enum):
-        Update = 1 # type: ImpinjGposWoker.Update
-        Get = 2 # type: ImpinjGposWoker.Get
     
-    def __init__(self, type: 'ImpinjGposWoker.Type' = Type.Get, **parmas):
+    def __init__(self):
         super().__init__()
         self.type = type
-        self.params = parmas
         self.gpos_cases = ImpinjGposUseCase()
         self.resp:str = ""
+        self.color = 'off'
         self.has_error = False
         self.error = RequestError()
 
+    def colorsLeds(self):
+        num_color = COLORS_LED[self.color]
+        bin_numers = list(bin(num_color)[2:].rjust(2, '0')[::-1])
+        leds = [GpoConfigurationModel(
+                gpo=index+1,
+                state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW
+            )  for index,bin_numer  in enumerate(bin_numers)]
+        
+        return leds
+
     def run(self):
         try:
-            if self.type == ImpinjGposWoker.Type.Update:
-                self.resp = self.gpos_cases.update_gpos(**self.params)
+            self.resp = self.gpos_cases.update_gpos(gpo_configurations=self.colorsLeds())
         except RequestError as e:
             self.has_error = True
             self.error = e

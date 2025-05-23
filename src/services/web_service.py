@@ -5,6 +5,7 @@ import json
 from services.websocket_service import WebsocketService
 from PyQt6.QtCore import pyqtSignal, QObject
 import time
+from random import randint
 class Communicator(QObject):
     message_received = pyqtSignal(str)
 
@@ -32,7 +33,7 @@ def webhook():
 def update_gpos():
     # Enviar mensaje a todos los WebSocket conectados
     data =request.data
-    print("gpos response___________________")
+    print(f"set colors gpos: {data}")
     return "Exitoso"
 
 
@@ -55,6 +56,21 @@ def stream():
             yield json.dumps(data) + "\n"
             time.sleep(1)
     return Response(generate(), mimetype='text/event-stream')
+
+
+@flask_app.post('/api/v1/logtarima')
+def storeLogtarima():
+    # Enviar mensaje a todos los WebSocket conectados
+
+    colors = ["yellow","green","red", "yellow"]
+    color =  colors[randint(0, len(colors)-1)]
+    print(f"color response: {color}")
+
+    return {
+        "data": {
+            "color": color
+        }
+    }
 
 
 

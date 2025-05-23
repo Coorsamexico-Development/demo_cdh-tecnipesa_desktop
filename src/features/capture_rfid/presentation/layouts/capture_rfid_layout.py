@@ -19,7 +19,6 @@ from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWo
 class CaptureRfidLayout(QWidget):
     def __init__(self):
         super().__init__()
-        self.times_led_changed = 0
         self.message_label = QLabel("")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -41,6 +40,12 @@ class CaptureRfidLayout(QWidget):
         self.cdh_worker = CdhTarimasWorker()
         
         self.cdh_worker.task_complete.connect(self._result_worker_cdh)
+
+        self.debounce_gpo_timer = QTimer()
+        self.debounce_gpo_timer.setInterval(700)
+        self.debounce_gpo_timer.setSingleShot(True)
+        self.debounce_gpo_timer.timeout.connect(self.update_geos_leds)
+
         self.gpos_worker = ImpinjGposWoker()
         self.gpos_worker.task_complete.connect(self._result_worker_gpos)
 
@@ -50,27 +55,21 @@ class CaptureRfidLayout(QWidget):
         # if self.times_led_changed > 10:
         #     return
         if color not in self.resp_colors:
-            self.resp_colors.add(color)
             if color == 'red' or (color == 'yellow' and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
-                self.update_color_led(color)
-
+                self.change_color_timer_geo(color)
+            
+            self.resp_colors.add(color)
         
 
         # self.message_label.setText('')
 
 
     def _result_worker_gpos(self):
-        pass
-        # if self.gpos_worker.has_error:
-        #     error = self.gpos_worker.error
-        #     # QMessageBox.warning(self,error.title, error.message)
-        #     self.message_label.setText(error.message)
-        #     return
-        # currentType = self.gpos_worker.type
 
-        # if currentType == ImpinjGposWoker.Type.Update:
-        #     self.message_label.setText(self.gpos_worker.resp)
-            
+        if self.gpos_worker.color != 'off':
+            QTimer.singleShot(2000, lambda: self.off_leds())
+
+        self.message_label.setText("")    
 
         # self.message_label.setText('')
 
@@ -82,54 +81,26 @@ class CaptureRfidLayout(QWidget):
     def get_images(self)->np.ndarray:
         return self.panels_videos.save_frames()
     
-    def update_color_led(self, color:str):
-        self.times_led_changed += 1
-        self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED[color]))
-        QTimer.singleShot(3000, self.off_leds)
-
+    # apagado de los leds y reincio de los scaneos, respuesta de colores
     def off_leds(self):
+        self.change_color_timer_geo('off')
         self.list_scaneos.clear_scaneos()
-        self.update_geos(gpo_configurations=self.colorsLeds(COLORS_LED['off']))
         self.resp_colors.clear()
-        # self.message_label.setText("")
-
-    def colorsLeds(self, num_color:int):
-       
-        bin_numers = list(bin(num_color)[2:].rjust(2, '0'))
-        leds = [GpoConfigurationModel(
-                gpo=index+1,
-                state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW
-            )  for index,bin_numer  in enumerate(bin_numers)]
+    
+    #actualiza el color de los geos para el worker
+    # y reinicia el timer
+    def change_color_timer_geo(self, color:str):
+        print(f"cambiando color: {color}___________")
+        self.gpos_worker.color = color
+        self.debounce_gpo_timer.start()
         
-        return leds
 
-       
-
-
-
-    def update_geos(self,gpo_configurations:list[GpoConfigurationModel]):
-
-        self.message_label.setText("Actualizando...")
-        self.gpos_worker.type = ImpinjGposWoker.Type.Update
-        self.gpos_worker.params = {'gpo_configurations':gpo_configurations }
+    # se ejecuta una vez terminado el timer
+    # el worker se encarga de hacer la peticion a la api deñ worker
+    def update_geos_leds(self):
+        self.message_label.setText("Respondiendo...")
         self.gpos_worker.start()
-       
-       
 
-    # def save_frame(self,frame:np.ndarray,image_time:str)->str:
-    #     image_id = len(self.dataset_json['images']) + 100
-    #     image_id = f"{image_id}{image_time}"
-    #     image_path:str = os.path.join(self.record_path,  f"frame_{image_id}.jpg")
-    #     relative_path = image_path.replace(self.db_rnn_datasets.base_path, "")[1:]
-    #     cv2.imwrite(image_path, frame)
-    #     height, width, _ = frame.shape
-
-    #     self.dataset_json['images'].append({
-    #         "id":image_id,
-    #         "width": width,
-    #         "height":height,
-    #         "file_name":relative_path,
-    #     })
         
 
     
