@@ -3,7 +3,6 @@ from PyQt6.QtCore import QTimer
 from pygrabber.dshow_graph import FilterGraph
 import numpy as np
 from datetime import datetime
-from typing import Tuple
 
 global start_time 
 start_time = datetime.now()
@@ -16,6 +15,7 @@ class CaptureCameraTime:
                  auto_start:bool = False,
                  ):
         super().__init__()
+        self.resolution_index = None
         self.frame = None
         self.camera = camera
         self.on_stop_record = on_stop_record
@@ -41,7 +41,7 @@ class CaptureCameraTime:
    
 
     def startCapture(self):
-        QTimer.singleShot(150, self._startCapture)
+        QTimer.singleShot(20, self._startCapture)
 
     def _startCapture(self):
         if self.capture_started:
@@ -50,7 +50,7 @@ class CaptureCameraTime:
         if self.camera is not None and self.resolution_index is not None:
             self.setSettings()
             self.capture_started = True
-            self.timer.start(120)
+            self.timer.start(60)
 
     def stopCapture(self):
         if self.capture_started:

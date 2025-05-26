@@ -57,6 +57,8 @@ class ListViewCamaras(QWidget):
     
     @camaras.setter
     def camaras(self, camaras:list[CamaraInfo]):
+        
+        self.remove_camaras()
         self._camaras = camaras
         self.update_camaras()
 
@@ -73,7 +75,6 @@ class ListViewCamaras(QWidget):
                 camara_item.is_active = False
 
     def update_camaras(self):
-        self.remove_camaras()
         for index, camara in  enumerate(self._camaras):
             carama_item = ViewCamaraItem(
                 index = index,
@@ -83,8 +84,14 @@ class ListViewCamaras(QWidget):
             self.scroll_layout.addWidget(carama_item)
 
     def remove_camaras(self):
+        self.scroll_layout
         for index in range(self.scroll_layout.count()):
-            self.scroll_layout.itemAt(index).widget().deleteLater()
+            item = self.scroll_layout.itemAt(index)
+            self.scroll_layout.removeItem(item)
+            if item is None:
+                continue
+            item.widget().deleteLater()
+        print(f"Total camaras removidas: {self.scroll_layout.count()}")
 
     def clear_layout(self):
         for index in range(self.main_layout.count()):

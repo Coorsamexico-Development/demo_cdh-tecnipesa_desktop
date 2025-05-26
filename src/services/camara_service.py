@@ -31,6 +31,11 @@ class CamaraInfo:
 
     def __str__(self):
         return f"CamaraInfo(camera_index={self.camera_index}, name={self.name}, resolution={self.resolutions})"
+    
+    def __eq__(self, value):
+        if isinstance(value, CamaraInfo):
+            return self.camera_index == value.camera_index and self.name == value.name
+        return False
 
 
 
