@@ -12,12 +12,13 @@ from typing import Tuple
 import numpy as np
 
 from pygrabber.dshow_graph import FilterGraph
+from features.capture_rfid.domain.workers.cameras_worker import CamerasWorker
 
 
 global start_time 
 start_time = datetime.now()
 base_path = os.getcwd()
-FILTER_INDEX_CAMERA = -1
+FILTER_INDEX_CAMERA = 1
 
 class PanelsVideo(QFrame):
     def __init__(self, onSave= lambda x,y:None):
@@ -60,13 +61,20 @@ class PanelsVideo(QFrame):
         horizontal_layout.addWidget(self.principal_camera_viewer,15)
         horizontal_layout.addWidget(self.list_view_camaras,5)
 
+        
+        self.cameras_worker = CamerasWorker(filter_index_camera=FILTER_INDEX_CAMERA, cameras=self.cameras)
+        
+        self.cameras_worker.was_chenged.connect(self.check_cameras)
+    
+        
         self.setLayout(horizontal_layout)
         QTimer.singleShot(150, lambda: self._stop_camaras(start_camaras=True))
+        
+        self.check_cameras()
 
-        self.check_camaras_timer = QTimer()
-        self.check_camaras_timer.setInterval(1500)
-        self.check_camaras_timer.timeout.connect(self.check_cameras)
-        self.check_camaras_timer.start()
+
+
+        
 
         
     # Inicia las camaras y asigna la funcion de actualizacion de imagenes a cada camara
@@ -118,26 +126,25 @@ class PanelsVideo(QFrame):
     # revisa las camaras conectadas y si hay cambios en los indices o nombres de las camaras
     # reinicia las camaras y actualiza la lista de camaras
     # si hay cambios en las camaras
-    def check_cameras(self):
-        cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index > FILTER_INDEX_CAMERA]
-
-
-        if cameras != self.cameras:
+    def check_cameras(self, was_chenged:bool = False):
+        if was_chenged:
             print("Camaras cambiaron, reiniciando camaras...")
+           
             # Detener las camaras actuales
             for camara_time in self.capture_camara_times:
                 camara_time.stopCapture()
-
+            self.list_view_camaras.remove_camaras()
             # Reiniciar las camaras con las nuevas camaras
-            self.cameras = cameras
+            self.cameras = self.cameras_worker.cameras
             self.capture_camara_times= [CaptureCameraTime(camera=camera) for camera in self.cameras]
 
-            self.list_view_camaras.remove_camaras()
+            
             self.list_view_camaras.camaras = self.cameras
             principal_camera_index =  self.principal_camera_index if self.principal_camera_index < len(self.cameras) else 0
             if len(self.cameras) > 0: 
                 self._start_camaras_time(principal_index= principal_camera_index)
 
+        QTimer.singleShot(1500, self.cameras_worker.start)
 
    
 # Actualiza las vistas de las camaras con el frame recibido
