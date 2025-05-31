@@ -58,15 +58,16 @@ class ListScaneos(QFrame):
         self.impinj_stream_worker.start()
 
     def clear_scaneos(self):
+        self.list_widget.clear()
         aux_scaneos = []
         for row,scaneo in enumerate(self.list_scaneos):
-            if scaneo.tag_inventory_event.scond_antenna is not None:
-                # si fue completada eliminos de la lista
-                item = self.list_widget.takeItem(row)
-                del item
-            else:#almacenados los que aun no se anterminado de scanear
+            if scaneo.tag_inventory_event.scond_antenna is None:
                 aux_scaneos.append(scaneo)  
+
         self.list_scaneos = aux_scaneos
+
+        for scaneo in self.list_scaneos:
+            self.add_scane_item(scaneo)
 
         
 
@@ -99,6 +100,10 @@ class ListScaneos(QFrame):
 
         self.list_scaneos.append(scaneo)
 
+        self.add_scane_item(scaneo)
+
+    def add_scane_item(self, scaneo:ScaneoModel):
+        print(f"addscane item: {scaneo}")
         # Crear un QListWidgetItem
         item = QListWidgetItem(self.list_widget)
         # Crear un widget personalizado (un QLabel en este caso)
