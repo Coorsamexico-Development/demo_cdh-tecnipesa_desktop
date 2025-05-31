@@ -104,7 +104,7 @@ class ListScaneos(QFrame):
 
        
     def add_scaneo_images(self,scaneo:ScaneoModel):
-        # scaneo.images = self.get_images()
+        scaneo.images = self.get_images()
         self.on_add_scaneo(scaneo)
 
     def add_scane_item(self, scaneo:ScaneoModel):
