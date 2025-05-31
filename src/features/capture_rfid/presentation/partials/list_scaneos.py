@@ -103,7 +103,6 @@ class ListScaneos(QFrame):
         self.add_scane_item(scaneo)
 
     def add_scane_item(self, scaneo:ScaneoModel):
-        print(f"addscane item: {scaneo}")
         # Crear un QListWidgetItem
         item = QListWidgetItem(self.list_widget)
         # Crear un widget personalizado (un QLabel en este caso)
