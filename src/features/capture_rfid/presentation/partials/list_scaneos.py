@@ -77,7 +77,8 @@ class ListScaneos(QFrame):
         self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
-       
+        if scaneo.tag_inventory_event.epc == "E2801191A5030065E024AA03":
+            return
 
 
         scaneoFind = next((s for s in self.list_scaneos \
@@ -89,18 +90,20 @@ class ListScaneos(QFrame):
                 
                 scaneoFind.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
                 #mandamos a llamar el scaneo
+                print(f"finish scane: {scaneoFind}____________________________")
                 self.on_add_scaneo(scaneoFind)
             return 
 
 
-        scaneo.images = self.get_images()
-        if len(scaneo.images) == 0:
-            return
-            
+        QTimer.singleShot(1000, lambda s=scaneo:self.add_scaneo_images(s) )
 
         self.list_scaneos.append(scaneo)
-
         self.add_scane_item(scaneo)
+        
+
+       
+    def add_scaneo_images(self,scaneo:ScaneoModel):
+        scaneo.images = self.get_images()
 
     def add_scane_item(self, scaneo:ScaneoModel):
         # Crear un QListWidgetItem

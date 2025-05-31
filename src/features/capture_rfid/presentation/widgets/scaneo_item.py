@@ -8,7 +8,7 @@ class ScaneoItem(QFrame):
         self.onAdd = onAdd
         layout = QHBoxLayout()
         label = QLabel(f"EPC: {scaneo.tag_inventory_event.epc}")
-        label2 = QLabel(f"Frequency: {scaneo.tag_inventory_event.frequency}")
+        label2 = QLabel(f"Antenna: {scaneo.tag_inventory_event.antenna_port}")
         # botton = QPushButton("Añadir")
         # botton.setProperty('class', 'btn_add')
         # botton.clicked.connect(lambda: self.onAdd(self.scaneo))
