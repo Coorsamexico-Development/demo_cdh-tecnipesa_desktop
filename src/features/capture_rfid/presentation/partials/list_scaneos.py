@@ -11,6 +11,14 @@ from features.capture_rfid.infrastructure.adapters.scaneo_adapter import ScaneoA
 import numpy as np
 from features.capture_rfid.domain.workers.impinj_stream_worker import ImpinjStreamWorker
 
+GROUP_ANTENNA = {
+    1: 'group_1',
+    2: 'group_1',
+    3: 'group_2',
+    4: 'group_2',
+}
+
+
 class ListScaneos(QFrame):
     def __init__(self,
                  
@@ -50,8 +58,17 @@ class ListScaneos(QFrame):
         self.impinj_stream_worker.start()
 
     def clear_scaneos(self):
-        self.list_widget.clear()
-        self.list_scaneos.clear()
+        aux_scaneos = []
+        for row,scaneo in enumerate(self.list_scaneos):
+            if scaneo.tag_inventory_event.scond_antenna is not None:
+                # si fue completada eliminos de la lista
+                item = self.list_widget.takeItem(row)
+                del item
+            else:#almacenados los que aun no se anterminado de scanear
+                aux_scaneos.append(scaneo)  
+        self.list_scaneos = aux_scaneos
+
+        
 
     def on_receive_scan(self, data):
         dataJson = json.loads(data)
@@ -59,10 +76,22 @@ class ListScaneos(QFrame):
         self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
-        exists = any(s.tag_inventory_event.epc == scaneo.tag_inventory_event.epc
-                    for s in self.list_scaneos)
-        if exists: #no agrega duplicados
-            return
+       
+
+
+        scaneoFind = next((s for s in self.list_scaneos \
+                           if s.tag_inventory_event.epc == scaneo.tag_inventory_event.epc), None)
+       
+        if scaneoFind is not None:
+            if scaneoFind.tag_inventory_event.scond_antenna is None and \
+                GROUP_ANTENNA[scaneoFind.tag_inventory_event.first_antenna] != GROUP_ANTENNA[scaneo.tag_inventory_event.antenna_port]:
+                
+                scaneoFind.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
+                #mandamos a llamar el scaneo
+                self.on_add_scaneo(scaneoFind)
+            return 
+
+
         scaneo.images = self.get_images()
         if len(scaneo.images) == 0:
             return
@@ -70,15 +99,14 @@ class ListScaneos(QFrame):
 
         self.list_scaneos.append(scaneo)
 
-        self.on_add_scaneo(scaneo)
         # Crear un QListWidgetItem
         item = QListWidgetItem(self.list_widget)
         # Crear un widget personalizado (un QLabel en este caso)
-        datastItem = ScaneoItem(scaneo)
+        scaneoItem = ScaneoItem(scaneo)
         # Establecer el tamaño del item
-        item.setSizeHint(datastItem.sizeHint())
+        item.setSizeHint(scaneoItem.sizeHint())
         # Añadir el widget personalizado al QListWidgetItem
-        self.list_widget.setItemWidget(item, datastItem)
+        self.list_widget.setItemWidget(item, scaneoItem)
 
     def remove_scaneo_item(self ):
         try:

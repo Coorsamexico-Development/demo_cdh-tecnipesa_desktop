@@ -42,12 +42,17 @@ def stream():
     # Enviar mensaje a todos los WebSocket conectados
     def generate():
         while True:
+            anntena_port =  randint(1, 4)
+
+            epcs = ["4oARkaUDAGXybMv_", "4oARkaUDAGXybNAf"]
+
+
             data = {
                 "timestamp": "2025-05-17T16:03:13.944189383Z",
                 "eventType": "tagInventory",
                 "tagInventoryEvent": {
-                    "epc": "4oARkaUDAGXybMv_",
-                    "antennaPort": 1,
+                    "epc": epcs[anntena_port % 2],
+                    "antennaPort": anntena_port,
                     "peakRssiCdbm": -7300,
                     "frequency": 919750,
                     "transmitPowerCdbm": 3000
@@ -64,11 +69,13 @@ def storeLogtarima():
 
     colors = ["yellow","green","red", "yellow"]
     color =  colors[randint(0, len(colors)-1)]
-    print(f"color response: {color}")
+    data =request.form
+    print(f"Color response: {color}, data: {data}")
 
     return {
         "data": {
-            "color": color
+            "color": color,
+
         }
     }
 

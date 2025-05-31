@@ -2,18 +2,24 @@ import json
 
 
 class TagInventory:
+    
+    scond_antenna = None
     def __init__(self,epc:str, antenna_port:int, peak_rssi_cdbm:int, frequency:int, transmit_power_cdbm:int
                     ):
         self.epc = epc
         self.antenna_port = antenna_port
+        self.first_antenna = antenna_port
         self.peak_rssi_cdbm = peak_rssi_cdbm
         self.frequency = frequency
         self.transmit_power_cdbm = transmit_power_cdbm
+        
 
     def to_dict(self):
         return {
             'epc': self.epc,
             'antenna_port': self.antenna_port,
+            'first_antenna': self.first_antenna,
+            'scond_antenna': self.scond_antenna,
             'peak_rssi_cdbm': self.peak_rssi_cdbm,
             'frequency': self.frequency,
             'transmit_power_cdbm': self.transmit_power_cdbm,

@@ -7,13 +7,20 @@ import io
 
 import numpy as np
 from services.api_cdh_service import api_cdh_service
+from features.capture_rfid.infrastructure.models.tag_inventory import TagInventory
 
 class ApiLogerTarimasDatasource:
     def __init__(self):
         pass
 
-    def store_log(self, tarima_epc:str, images: np.ndarray)->str:
-        payload = {'token_tag': tarima_epc}
+    def store_log(self, tag_inventory:TagInventory, images: np.ndarray)->str:
+        payload = {
+                    'token_tag': tag_inventory.epc,
+                    'first_antenna': tag_inventory.first_antenna,
+                    'scond_antenna': tag_inventory.scond_antenna,
+                }
+        
+        
         files= [('image[]',(f'image_{index}.jpg', imageToBytesIO(image), 'image/jpeg')) for index,image in enumerate(images)]
 
         try:

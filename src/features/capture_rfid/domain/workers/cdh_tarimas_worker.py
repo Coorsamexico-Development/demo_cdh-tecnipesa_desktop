@@ -25,7 +25,7 @@ class CdhTarimasWorker(QThread):
         self.colorsResp = []
         try:
             color = self.api_cdh_tarimas.store_log(
-                tarima_epc=self.scaneo.tag_inventory_event.epc,
+                tag_inventory=self.scaneo.tag_inventory_event,
                 images=self.scaneo.images
                 )
             self.scaneo.images.clear()
