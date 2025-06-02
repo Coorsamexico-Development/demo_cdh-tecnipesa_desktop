@@ -2,7 +2,7 @@ import os
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QIcon
 from features.home.widgets.main_menu import MainMenu
-from features.capture_rfid.presentation.screens.capture_rfid_screen import CaptureRfidScreen
+from features.capture_rfid.presentation.screens.home_screen import HomeScreen
 from features.capture_rfid.infrastructure.datasource.api_impinj_gpos_datasource import (
     ApiImpinjDatasource)
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
@@ -20,7 +20,7 @@ class MainScreen(QMainWindow):
 
         # self.tabs = QTabWidget()
         
-        currentScreen = CaptureRfidScreen()
+        currentScreen = HomeScreen()
         self.setCentralWidget(currentScreen)
 
         
