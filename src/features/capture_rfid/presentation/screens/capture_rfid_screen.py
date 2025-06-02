@@ -52,6 +52,8 @@ class CaptureRfidScreen(QWidget):
 
 
     def _result_worker_cdh(self, color:str, must_change:bool):
+        if color != 'off':
+            QTimer.singleShot(1800, lambda: self.off_leds())
         if must_change:
             self.check_change_color(color)
 
@@ -67,10 +69,7 @@ class CaptureRfidScreen(QWidget):
 
 
     def _result_worker_gpos(self):
-
-        if self.gpos_worker.color != 'off':
-            QTimer.singleShot(3000, lambda: self.off_leds())
-
+       
         self.message_label.setText("")    
 
         # self.message_label.setText('')
