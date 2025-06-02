@@ -25,6 +25,7 @@ class DBTarimasDatasource:
             raise SqlError(title="Error SQL",
                                 message="Error update or create Tarima")
         except Exception as e:
+            print(e)
             raise SqlError(title="Error SQL",
                                 message="Error update or create Tarima")
         

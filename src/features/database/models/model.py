@@ -2,11 +2,14 @@ from datetime import datetime
 from features.database.managers.sqlite_manager import SqlliteManager
 from features.database.models.collection_db import CollectionDB
 from features.database.utils.convertions import create_slug
+from sqlite3 import Connection
+from typing import Union
 
 base_atributes = [
     'primary_key',
     'table',
-    '_exist'
+    '_exist',
+    '_connection'
 ]
 class Model:
     
@@ -22,9 +25,15 @@ class Model:
             'table': table_name,
             '_exist': False
         }
+        self._connection:Union[Connection,None] = None
         for key, value in kwargs.items():
+            if key == '_connection':
+                self._connection = value
+                continue
             self._attributes[key] = value
             self._original_attributes[key] = value
+        if self._connection is None:
+            self._connection = SqlliteManager().get_connection()
             
 
     def __setattr__(self, name, value):
@@ -69,12 +78,10 @@ class Model:
         return dirty
 
     
+
     
     def insert_db(self):
-
-        conn = SqlliteManager().get_connection()
-        cursor = conn.cursor()
-        
+        cursor = self._connection.cursor()
         start_time = datetime.now()
         if 'created_at' not in self._attributes:
             self._attributes['created_at'] = start_time.strftime("%Y/%m/%d %H:%M:%S")
@@ -94,12 +101,11 @@ class Model:
         cursor.execute(query_insert, values)
         self._attributes['id'] = cursor.lastrowid
         self._attributes['_exist'] = True
-        conn.commit()
+        self._connection.commit()
         cursor.close()
 
     def update_db(self, where=None):
-        conn = SqlliteManager().get_connection()
-        cursor = conn.cursor()
+        cursor = self._connection.cursor()
         if where is None:
             where = f"WHERE {self.primary_key} = {self._attributes[self.primary_key]}"
 
@@ -118,17 +124,16 @@ class Model:
 
         query_update = f"UPDATE `{self.table}` SET {columns_update} {where}"
         cursor.execute(query_update, tuple(params.values()))
-        conn.commit()
+        self._connection.commit()
         cursor.close()
 
     def delete(self)->int:
-        conn = SqlliteManager().get_connection()
-        cursor = conn.cursor()
+        cursor = self._connection.cursor()
         where = f"WHERE {self.primary_key} = ?"
         query_delete = f"DELETE FROM `{self.table}` {where}"
         cursor.execute(query_delete, tuple([self._attributes[self.primary_key]]))
         affected = cursor.rowcount
-        conn.commit()
+        self._connection.commit()
         cursor.close()
         self._exist = False
         return affected

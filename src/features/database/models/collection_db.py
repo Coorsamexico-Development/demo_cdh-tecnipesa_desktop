@@ -11,6 +11,7 @@ class CollectionDB:
         self.query = query
         self.table = instnace.table
         self.primary_key = instnace.primary_key
+        self._connection = instnace._connection
         self.selects = '*'
         self.query_limit = ''
         self.query_groups= ''
@@ -114,8 +115,7 @@ class CollectionDB:
     
 
     def _excute_query(self)->list:
-        conn = SqlliteManager().get_connection()
-        cursor = conn.cursor()
+        cursor = self._connection.cursor()
         self.set_querys()
         # print(f"{self.query} ({self.query_values})")
         cursor.execute(self.query, tuple(self.query_values))
