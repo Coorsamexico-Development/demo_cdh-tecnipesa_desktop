@@ -82,6 +82,7 @@ class CaptureRfidScreen(QWidget):
             tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneo.tag_inventory_event.epc)
 
             if tarima is not None:
+                # print(f"Encontro la tarima {tarima}")
                 self.cdh_worker.must_change = False
                 color = 'green' if tarima.switch else 'red'
                 self.check_change_color(color)
