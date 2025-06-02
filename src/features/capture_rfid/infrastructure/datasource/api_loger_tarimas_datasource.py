@@ -16,14 +16,16 @@ class ApiLogerTarimasDatasource:
     def __init__(self):
         pass
 
-    def store_log(self, tag_inventory:TagInventory,)->Tuple[str,LogTarimaModel ]:
+    def store_log(self, tag_inventory:TagInventory,images: np.ndarray)->str:
         payload = {
                     'token_tag': tag_inventory.epc,
                     'first_antenna': tag_inventory.first_antenna,
                     'scond_antenna': tag_inventory.scond_antenna,
                 }
         
-        
+        files= [('image[]',(f'image_{index}.jpg', imageToBytesIO(image), 'image/jpeg')) 
+                for index,image in enumerate(images)]
+
       
         try:
             response = api_cdh_service.post('logtarima', data=payload)
@@ -32,8 +34,8 @@ class ApiLogerTarimasDatasource:
             if "data" in response:
                 if "color" in response['data']:
                     color = response['data']['color']
-                    logTarima = LogTarimaAdapter.fromJson( response['data']['log_tarima'])
-                    return color, logTarima
+                    # logTarima = LogTarimaAdapter.fromJson( response['data']['log_tarima'])
+                    return color
             
          
             raise RequestError(title="Error al guardar el log de la tarima",

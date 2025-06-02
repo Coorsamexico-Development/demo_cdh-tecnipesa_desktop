@@ -12,6 +12,7 @@ from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 
 import numpy as np
 from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWorker
+from features.database.models.tarima import Tarima
 
 
 
@@ -50,8 +51,12 @@ class CaptureRfidScreen(QWidget):
         self.gpos_worker.task_complete.connect(self._result_worker_gpos)
 
 
-    def _result_worker_cdh(self, color):
+    def _result_worker_cdh(self, color:str, must_change:bool):
+        if must_change:
+            self.check_change_color(color)
 
+
+    def check_change_color(self,color:str):
         # if self.times_led_changed > 10:
         #     return
         if color not in self.resp_colors:
@@ -59,9 +64,6 @@ class CaptureRfidScreen(QWidget):
                 self.change_color_timer_geo(color)
             
             self.resp_colors.add(color)
-        
-
-        # self.message_label.setText('')
 
 
     def _result_worker_gpos(self):
@@ -76,6 +78,17 @@ class CaptureRfidScreen(QWidget):
     def on_add_scaneo(self,scaneo:ScaneoModel):
             # self.message_label.setText("Guardando...")
             self.cdh_worker.scaneo = scaneo
+
+            tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneo.tag_inventory_event.epc)
+
+            if tarima is not None:
+                self.cdh_worker.must_change = False
+                color = 'green' if tarima.switch else 'red'
+                self.check_change_color(color)
+            else:
+                self.cdh_worker.must_change = True
+
+
             self.cdh_worker.start()
 
     def get_images(self)->np.ndarray:

@@ -1,4 +1,3 @@
-import enum
 from PyQt6.QtCore import QThread, pyqtSignal
 
 from features.shared.errors.request_error import RequestError
@@ -12,7 +11,7 @@ from features.capture_rfid.infrastructure.models.log_tarima_model import LogTari
 
 
 class CdhTarimasWorker(QThread):
-    task_complete = pyqtSignal(str)
+    task_complete = pyqtSignal(str,bool)
 
    
     
@@ -20,7 +19,7 @@ class CdhTarimasWorker(QThread):
         super().__init__()
         self.scaneo:Union[ScaneoModel, None] = None
         self.api_cdh_tarimas = ApiLogerTarimasDatasource()
-     
+        self.must_change = False
         self.has_error = False
         self.error = RequestError()
 
@@ -30,17 +29,13 @@ class CdhTarimasWorker(QThread):
 
            
             images=self.scaneo.images.copy()
-            color, log_tarima = self.api_cdh_tarimas.store_log(
+            color = self.api_cdh_tarimas.store_log(
                 tag_inventory=self.scaneo.tag_inventory_event,
-                )
-            self.task_complete.emit(color)
-            print(f"images: {len(images)}___________________")
-            self.api_cdh_tarimas.store_log_images(
-                log_tarima_id=log_tarima.id,
                 images=images
                 )
             self.log_tariam_id = None
             self.scaneo.images.clear()
+            self.task_complete.emit(color,self.must_change)
 
 
                 
@@ -49,7 +44,7 @@ class CdhTarimasWorker(QThread):
         except RequestError as e:
             self.has_error = True
             self.error = e
-            self.task_complete.emit( 'yellow')
+            self.task_complete.emit( 'yellow', self.must_change)
 
 
 
