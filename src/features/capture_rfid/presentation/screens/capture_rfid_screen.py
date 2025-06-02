@@ -53,7 +53,7 @@ class CaptureRfidScreen(QWidget):
 
     def _result_worker_cdh(self, color:str, must_change:bool):
         if len(self.resp_colors) > 0:
-            QTimer.singleShot(1800, lambda: self.off_leds())
+            QTimer.singleShot(1500, lambda: self.off_leds())
         if must_change:
             self.check_change_color(color)
 
@@ -85,10 +85,11 @@ class CaptureRfidScreen(QWidget):
                 # print(f"Encontro la tarima {tarima}")
                 self.cdh_worker.must_change = False
                 color = 'green' if tarima.switch else 'red'
-                self.check_change_color(color)
+                
             else:
-                self.cdh_worker.must_change = True
-
+                color = 'yellow'
+                # self.cdh_worker.must_change = True
+            self.check_change_color(color)
 
             # self.cdh_worker.start()
 
