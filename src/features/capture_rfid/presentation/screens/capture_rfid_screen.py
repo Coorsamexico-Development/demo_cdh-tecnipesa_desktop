@@ -74,11 +74,12 @@ class CaptureRfidScreen(QWidget):
         self.message_label.setText("")    
 
         # self.message_label.setText('')
+    def send_scaneo(self, scaneo:ScaneoModel):
+        self.cdh_worker.scaneo = scaneo
+        self.cdh_worker.start()
 
     def on_add_scaneo(self,scaneo:ScaneoModel):
             # self.message_label.setText("Guardando...")
-            self.cdh_worker.scaneo = scaneo
-
             tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneo.tag_inventory_event.epc)
 
             if tarima is not None:
@@ -90,7 +91,7 @@ class CaptureRfidScreen(QWidget):
                 self.cdh_worker.must_change = True
 
 
-            self.cdh_worker.start()
+            # self.cdh_worker.start()
 
     def get_images(self)->np.ndarray:
         return self.panels_videos.save_frames()

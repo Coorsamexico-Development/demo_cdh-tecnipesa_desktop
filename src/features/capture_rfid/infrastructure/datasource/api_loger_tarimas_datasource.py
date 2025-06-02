@@ -28,7 +28,7 @@ class ApiLogerTarimasDatasource:
 
       
         try:
-            response = api_cdh_service.post('logtarima', data=payload)
+            response = api_cdh_service.post('logtarima', data=payload, files=files)
             
             response = json.loads(response.content)
             if "data" in response:
