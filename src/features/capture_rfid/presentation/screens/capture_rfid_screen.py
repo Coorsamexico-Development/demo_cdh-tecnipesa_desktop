@@ -52,7 +52,7 @@ class CaptureRfidScreen(QWidget):
 
 
     def _result_worker_cdh(self, color:str, must_change:bool):
-        if color != 'off':
+        if len(self.resp_colors) > 0:
             QTimer.singleShot(1800, lambda: self.off_leds())
         if must_change:
             self.check_change_color(color)
