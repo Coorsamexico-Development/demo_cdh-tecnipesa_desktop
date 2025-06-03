@@ -61,7 +61,7 @@ class ListScaneos(QFrame):
 
     def clear_scaneos(self):
         for scaneoItem in self.list_scaneos:
-            if scaneoItem.scaneo.tag_inventory_event.scond_antenna is not None:
+            if len(scaneoItem.scaneo.images) > 0:
                 self.remove_scaneo_item(scaneoItem)
 
     def on_receive_scan(self, data):

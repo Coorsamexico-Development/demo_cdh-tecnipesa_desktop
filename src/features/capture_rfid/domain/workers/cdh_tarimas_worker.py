@@ -33,8 +33,6 @@ class CdhTarimasWorker(QThread):
                 tag_inventory=self.scaneo.tag_inventory_event,
                 images=images
                 )
-            self.log_tariam_id = None
-            self.scaneo.images.clear()
             self.task_complete.emit(color,self.must_change)
 
 
