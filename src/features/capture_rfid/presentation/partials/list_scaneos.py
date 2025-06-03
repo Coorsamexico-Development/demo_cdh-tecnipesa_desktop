@@ -88,14 +88,15 @@ class ListScaneos(QFrame):
                 scaneoItemFind.scaneo.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
 
 
-                #mandamos a llamar el scaneo
-                self.on_add_scaneo(scaneoItemFind)
-                QTimer.singleShot(1000, lambda s=scaneoItemFind.scaneo:self.add_scaneo_images(s) )
+                
 
             scaneoItemFind.updateInfo()
             return 
 
-        self.add_scane_item(scaneo)
+        scaneoItem = self.add_scane_item(scaneo)
+        self.on_add_scaneo(scaneoItem)
+        #mandamos a llamar el scaneo
+        QTimer.singleShot(1000, lambda s=scaneo:self.add_scaneo_images(s) )
         
 
        
@@ -103,7 +104,7 @@ class ListScaneos(QFrame):
         scaneo.images = self.get_images()
         self.send_scaneo(scaneo)
 
-    def add_scane_item(self, scaneo:ScaneoModel):
+    def add_scane_item(self, scaneo:ScaneoModel)->ScaneoItem:
         # Crear un QListWidgetItem
         item = QListWidgetItem(self.list_widget)
         # Crear un widget personalizado (un QLabel en este caso)
@@ -114,6 +115,7 @@ class ListScaneos(QFrame):
         self.list_widget.setItemWidget(item, scaneoItem)
 
         self.list_scaneos.append(scaneoItem)
+        return scaneoItem
 
     def remove_scaneo_item(self, scaneo_item:ScaneoItem ):
         try:

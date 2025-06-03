@@ -1,30 +1,48 @@
-from PyQt6.QtWidgets import QApplication, QSplashScreen, QLabel, QMainWindow
-from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtWidgets import QApplication, QSplashScreen, QMainWindow
+from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter, QGuiApplication
+from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation, pyqtProperty, QObject
 import sys
 
-class SplashScreen(QSplashScreen):
+class FadeSplashScreen(QSplashScreen):
     def __init__(self):
-        super().__init__()
-
-        # Crear fondo azul del splash
         pixmap = QPixmap(600, 300)
-        pixmap.fill(QColor("#2B579A"))  # Color similar al azul de Word
-        self.setPixmap(pixmap)
-
-        # Dibujar elementos con QPainter
+        pixmap.fill(QColor("#2B579A"))
+        super().__init__(pixmap)
         self.setFont(QFont("Segoe UI", 30, QFont.Weight.Bold))
 
-        painter = QPainter(pixmap)
-        painter.setPen(Qt.GlobalColor.white)
-        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, "Word")
+        # Draw "Word"
+        # painter = QPainter(self.pixmap())
+        # painter.setPen(Qt.GlobalColor.white)
+        # painter.drawText(self.pixmap().rect(), Qt.AlignmentFlag.AlignCenter, "Word")
+        # painter.end()
 
-        font_small = QFont("Segoe UI", 10)
-        painter.setFont(font_small)
-        painter.drawText(20, pixmap.height() - 20, "Iniciando...")
-        painter.end()
+        self.message_base = "Iniciando"
+        self.dot_count = 0
+        self.max_dots = 5
 
-        self.setPixmap(pixmap)
+        self.setFont(QFont("Segoe UI", 12))
+        self.setStyleSheet("color: white")
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_message)
+        self.timer.start(500)
+
+        # Para controlar la opacidad
+        self._opacity = 1.0
+        self.setWindowOpacity(self._opacity)
+
+    def update_message(self):
+        self.dot_count = (self.dot_count + 1) % (self.max_dots + 1)
+        dots = "." * self.dot_count
+        self.showMessage(f"{self.message_base}{dots}", Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignLeft, Qt.GlobalColor.white)
+
+    def fade_and_close(self, on_finished):
+        self.animation = QPropertyAnimation(self, b"windowOpacity")
+        self.animation.setDuration(5000)  # 1 segundo
+        self.animation.setStartValue(1.0)
+        self.animation.setEndValue(0.0)
+        self.animation.finished.connect(lambda: [self.close(), on_finished()])
+        self.animation.start()
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -32,13 +50,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Aplicación Principal")
         self.setGeometry(100, 100, 800, 600)
 
+# App setup
 app = QApplication(sys.argv)
 
-splash = SplashScreen()
+splash = FadeSplashScreen()
 splash.show()
 
-# Simular carga de la aplicación
-QTimer.singleShot(3000, splash.close)  # Cierra el splash después de 3 segundos
-QTimer.singleShot(3000, lambda: MainWindow().show())
+# Mostrar ventana principal con desvanecimiento
+def show_main_window():
+    window = MainWindow()
+    window.show()
+
+QTimer.singleShot(4000, lambda: splash.fade_and_close(show_main_window))
 
 sys.exit(app.exec())
