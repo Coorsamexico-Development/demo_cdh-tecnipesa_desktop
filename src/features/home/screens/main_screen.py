@@ -8,6 +8,7 @@ from features.capture_rfid.infrastructure.datasource.api_impinj_gpos_datasource 
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
     GpoConfigurationModel)
 from features.database.managers.sqlite_manager import SqliteManager
+from features.home.datasource.api_impinj_datasource import ApiImpinjDatasource
 
 base_path = os.getcwd()
 
@@ -42,6 +43,10 @@ class MainScreen(QMainWindow):
         datasource = ApiImpinjGposDatasource()
         datasource.update_gpos(gpo_configurations=self.offLeds())
         print("luces apagadas")
+
+        api_impinj = ApiImpinjDatasource()
+        api_impinj.stop_presets()
+
 
 
     def offLeds(self):
