@@ -6,12 +6,12 @@ from PyQt6.QtCore import QTimer
 import threading
 from services.websocket_service import WebsocketService
 from services.web_service import run_flask
-from features.database.managers.sqlite_manager import SqlliteManager
+from features.database.managers.sqlite_manager import SqliteManager
 from features.database.migrations.creates_tables import CreateTables 
 
 
 
-db_manager = SqlliteManager()
+db_manager = SqliteManager()
 
 if db_manager.required_migration:
     CreateTables().up()

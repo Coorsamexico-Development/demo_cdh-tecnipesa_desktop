@@ -8,7 +8,7 @@ from features.capture_rfid.infrastructure.datasource.db_tarimas_datasource impor
 from features.database.models.tarima import Tarima
 from features.shared.errors.sql_error import SqlError
 from typing import Union
-from features.database.managers.sqlite_manager import SqlliteManager
+from features.database.managers.sqlite_manager import SqliteManager
 
 
 
@@ -26,7 +26,7 @@ class TarimasSyncWorker(QThread):
         self.error:Union[SqlError,RequestError] = SqlError()
 
     def run(self):
-        sqlite_manager = SqlliteManager()
+        sqlite_manager = SqliteManager()
         try:
             last_tarima = Tarima.select('*').orderBy('tarimas.updated_at', 'desc').first()
             next_page = None

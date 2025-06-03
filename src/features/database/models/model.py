@@ -1,5 +1,5 @@
 from datetime import datetime
-from features.database.managers.sqlite_manager import SqlliteManager
+from features.database.managers.sqlite_manager import SqliteManager
 from features.database.models.collection_db import CollectionDB
 from features.database.utils.convertions import create_slug
 from sqlite3 import Connection
@@ -33,7 +33,7 @@ class Model:
             self._attributes[key] = value
             self._original_attributes[key] = value
         if self._connection is None:
-            self._connection = SqlliteManager().get_connection()
+            self._connection = SqliteManager().get_connection()
             
 
     def __setattr__(self, name, value):
@@ -153,15 +153,15 @@ class Model:
         instance.save()
         return instance
     @classmethod
-    def select(cls, *selects):
-        return CollectionDB(cls).select(*selects)
+    def select(cls, *selects,**kwargs ):
+        return CollectionDB(cls, **kwargs).select(*selects)
     
     @classmethod
-    def selectRaw(cls, select_text:str):
-        return CollectionDB(cls).selectRaw(select_text)
+    def selectRaw(cls, select_text:str, **kwargs):
+        return CollectionDB(cls, **kwargs).selectRaw(select_text)
     
 
     @classmethod
-    def find(cls, value):
-        return CollectionDB(cls).find(value)
+    def find(cls, value, **kwargs):
+        return CollectionDB(cls, **kwargs).find(value)
 

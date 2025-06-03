@@ -1,13 +1,13 @@
 import sqlite3
 import os
 
-class SqlliteManager:
+class SqliteManager:
     _instance = None
     required_migration = False
 
     def __new__(cls, db_file='database.sqlite'):
         if cls._instance is None:
-            cls._instance = super(SqlliteManager, cls).__new__(cls)
+            cls._instance = super(SqliteManager, cls).__new__(cls)
             cls._instance._initialize(db_file)
         return cls._instance
 

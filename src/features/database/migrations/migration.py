@@ -2,7 +2,7 @@ import os
 from sqlite3 import Cursor, Error
 
 
-from features.database.managers.sqlite_manager import SqlliteManager
+from features.database.managers.sqlite_manager import SqliteManager
 
 class QueryMigration:
     def __init__(self, query:str,check_table_exist:bool=False, table = '' ) -> None:
@@ -18,7 +18,7 @@ class QueryMigration:
 
 class Migration:
     def __init__(self, querys: list[QueryMigration]=[]) -> None:
-        self.db_manager = SqlliteManager()
+        self.db_manager = SqliteManager()
         self.querys = querys
 
     def up(self):

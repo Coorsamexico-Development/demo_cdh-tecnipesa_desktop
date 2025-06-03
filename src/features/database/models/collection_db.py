@@ -1,13 +1,18 @@
 from typing import Union
-from features.database.managers.sqlite_manager import SqlliteManager
+from features.database.managers.sqlite_manager import SqliteManager
 
 
 class CollectionDB:
     
 
-    def __init__(self, cls, query: str = 'SELECT [selects] FROM `[table]` [joins] [wheres] [groups] [orderBy] [limits]'):
+    def __init__(self, cls, 
+                 
+                 query: str = 'SELECT [selects] FROM `[table]` [joins] [wheres] [groups] [orderBy] [limits]',
+                 
+                 **kwargs
+                 ):
         self.cls = cls
-        instnace = cls()
+        instnace = cls(**kwargs)
         self.query = query
         self.table = instnace.table
         self.primary_key = instnace.primary_key
