@@ -3,26 +3,26 @@ import json
 from services.pusher_service import PusherService
 import sqlite3
 from features.database.managers.sqlite_manager import SqliteManager
-from src.features.capture_rfid.infrastructure.models.tarima_model import TarimaModel
-from src.features.database.models.tarima import Tarima
-from features.shared.errors.sql_error import SqlError
+from features.capture_rfid.infrastructure.models.tarima_model import TarimaModel
+from features.database.models.tarima import Tarima
 
 
 class PusherWorker(QObject):
 
     def __init__(self):
         super().__init__()
-        self.conn = sqlite3.connect(SqliteManager)
+        self.conn = sqlite3.connect(SqliteManager().db_file)
         self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=False)
 
 
     def connect_handler(self,_):
-        channel = self.pusher.listen(f"RefreshTarimas")
-        channel.bind('RefreshTarimas', self.handle_event)
+        channel = self.pusher.listen("RefreshTarimas")
+        channel.bind('App\\Events\\TarimaEvent', self.handle_event)
+        # channel.bind('TarimaEvent', self.handle_event)
 
     def handle_event(self, event_data):
         data_json = json.loads(event_data)
-
+        # print(data_json)
         if 'tarima' in data_json:
             tarima = TarimaModel.fromJson(data_json['tarima'])
             self.updateOrCreate(tarima)
