@@ -13,6 +13,8 @@ class ImpinjStartWoker(QThread):
         super().__init__()
         self.type = type
         self.api_impinj = ApiImpinjDatasource()
+        self.has_error = False
+        self.error = None
 
     def run(self):
         try:
