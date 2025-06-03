@@ -9,7 +9,7 @@ class HomeScreen(QWidget):
         layout_body = QVBoxLayout()
         layout_body.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout_body)
-        self.toGo('async_data')
+        self.toGo('capture_rfid')
         
     def toGo(self, route_name:str, **params):
         layout = self.layout()
@@ -18,9 +18,7 @@ class HomeScreen(QWidget):
             body = body.widget()
             body.deleteLater()
         #layout change    
-        if route_name == 'async_data':
-            body = AsyncDataScreen()
-        elif route_name == 'capture_rfid':
+        if  route_name == 'capture_rfid':
             body = CaptureRfidScreen()
 
         body.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)

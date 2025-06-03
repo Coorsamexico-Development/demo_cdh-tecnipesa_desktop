@@ -1,0 +1,92 @@
+from PyQt6.QtWidgets import QSplashScreen
+from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation
+from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter
+from features.database.managers.sqlite_manager import SqliteManager
+from features.database.migrations.creates_tables import CreateTables
+from features.capture_rfid.domain.workers.tarimas_sync_worker import TarimasSyncWorker
+
+class FadeSplashScreen(QSplashScreen):
+    def __init__(self, on_finished):
+        super().__init__()
+        self.on_finished = on_finished
+
+
+        pixmap = QPixmap(600, 300)
+        pixmap.fill(QColor("#BF2626"))
+        self.setFont(QFont("Segoe UI", 30, QFont.Weight.Bold))
+        self.setPixmap(pixmap)
+
+
+        # Draw "Word"
+        painter = QPainter(pixmap)
+        painter.setPen(Qt.GlobalColor.white)
+        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, "Coorsamexico")
+
+        font_small = QFont("Segoe UI", 12)
+        painter.setFont(font_small)
+
+
+
+        self.message_base = "Iniciando"
+        self.dot_count = 0
+        self.max_dots = 5
+
+        self.setFont(QFont("Segoe UI", 10))
+        self.setStyleSheet("color: white")
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_message)
+        self.timer.start(300)
+
+        # Para controlar la opacidad
+        self._opacity = 1.0
+        self.setWindowOpacity(self._opacity)
+
+        painter.end()
+
+        self.setPixmap(pixmap)
+
+
+        self.tarimas_sync_worker = TarimasSyncWorker()
+        self.tarimas_sync_worker.task_complete.connect(self.result_tarimas_worker)
+        QTimer.singleShot(200,self.load_data)
+
+    def load_data(self):
+        self.load_sqlite()
+        self.async_data()
+
+
+    def load_sqlite(self):
+        db_manager = SqliteManager()
+        if db_manager.required_migration:
+            CreateTables().up()
+            self.message_base = "Creando base de datos"
+        db_manager.close_connection()
+
+
+    def async_data(self): 
+        self.tarimas_sync_worker.start()
+
+    def result_tarimas_worker(self,success:bool):
+        if success:
+            self.message_base = "Sincronización Exitosamente."
+        else: 
+            self.message_base = "Error al sincronizar la información"
+        self.fade_and_close()
+        
+    
+
+
+    def update_message(self):
+        self.dot_count = (self.dot_count + 1) % (self.max_dots + 1)
+        dots = "." * self.dot_count
+        self.showMessage(f"{self.message_base}{dots}", Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignLeft, Qt.GlobalColor.white)
+
+    def fade_and_close(self):
+        self.animation = QPropertyAnimation(self, b"windowOpacity")
+        self.animation.setDuration(800)  # 1 segundo
+        self.animation.setStartValue(1.0)
+        self.animation.setEndValue(0.0)
+        self.animation.finished.connect(lambda: [self.close(),self.on_finished()])
+        self.animation.start()
+

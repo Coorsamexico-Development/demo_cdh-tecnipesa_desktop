@@ -5,16 +5,22 @@ import sys
 
 class FadeSplashScreen(QSplashScreen):
     def __init__(self):
+        super().__init__()
         pixmap = QPixmap(600, 300)
-        pixmap.fill(QColor("#2B579A"))
-        super().__init__(pixmap)
+        pixmap.fill(QColor("#BF2626"))
         self.setFont(QFont("Segoe UI", 30, QFont.Weight.Bold))
+        self.setPixmap(pixmap)
+
 
         # Draw "Word"
-        # painter = QPainter(self.pixmap())
-        # painter.setPen(Qt.GlobalColor.white)
-        # painter.drawText(self.pixmap().rect(), Qt.AlignmentFlag.AlignCenter, "Word")
-        # painter.end()
+        painter = QPainter(pixmap)
+        painter.setPen(Qt.GlobalColor.white)
+        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, "Coorsamexico")
+
+        font_small = QFont("Segoe UI", 22)
+        painter.setFont(font_small)
+
+
 
         self.message_base = "Iniciando"
         self.dot_count = 0
@@ -31,6 +37,11 @@ class FadeSplashScreen(QSplashScreen):
         self._opacity = 1.0
         self.setWindowOpacity(self._opacity)
 
+        painter.end()
+
+        self.setPixmap(pixmap)
+
+
     def update_message(self):
         self.dot_count = (self.dot_count + 1) % (self.max_dots + 1)
         dots = "." * self.dot_count
@@ -38,7 +49,7 @@ class FadeSplashScreen(QSplashScreen):
 
     def fade_and_close(self, on_finished):
         self.animation = QPropertyAnimation(self, b"windowOpacity")
-        self.animation.setDuration(5000)  # 1 segundo
+        self.animation.setDuration(800)  # 1 segundo
         self.animation.setStartValue(1.0)
         self.animation.setEndValue(0.0)
         self.animation.finished.connect(lambda: [self.close(), on_finished()])
