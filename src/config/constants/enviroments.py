@@ -16,6 +16,7 @@ pusherAppId = config['PUSHER_APP_ID']
 pusherAppkey = config['PUSHER_APP_KEY']
 pusherCluster = config['PUSHER_APP_CLUSTER']
 pusherSecret = config['PUSHER_APP_SECRET']
+presetId= config['PRESET_ID']
 
 # gcKeyFile = config['GOOGLE_CLOUD_KEY_FILE']
 # gcProjectId = config['GOOGLE_CLOUD_PROJECT_ID']

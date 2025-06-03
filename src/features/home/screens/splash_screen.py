@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter
 from features.database.managers.sqlite_manager import SqliteManager
 from features.database.migrations.creates_tables import CreateTables
 from features.capture_rfid.domain.workers.tarimas_sync_worker import TarimasSyncWorker
+from features.home.workers.impinj_start_worker import ImpinjStartWoker
 
 class FadeSplashScreen(QSplashScreen):
     def __init__(self, on_finished):
@@ -49,11 +50,17 @@ class FadeSplashScreen(QSplashScreen):
 
         self.tarimas_sync_worker = TarimasSyncWorker()
         self.tarimas_sync_worker.task_complete.connect(self.result_tarimas_worker)
+
+        self.impinj_start_worker = ImpinjStartWoker()
+        #alfinalizar el prendido de las antenas intentamos syncronizar la data
+        self.impinj_start_worker.task_complete.connect(self.start_async_tarimas)
+
         QTimer.singleShot(200,self.load_data)
 
     def load_data(self):
         self.load_sqlite()
-        self.async_data()
+        self.message_base = "Iniciando antenas"
+        self.impinj_start_worker.start()
 
 
     def load_sqlite(self):
@@ -62,10 +69,14 @@ class FadeSplashScreen(QSplashScreen):
             CreateTables().up()
             self.message_base = "Creando base de datos"
         db_manager.close_connection()
-
-
-    def async_data(self): 
+    
+    def start_async_tarimas(self):
+        if self.impinj_start_worker.has_error:
+            print(self.impinj_start_worker.error)
+        self.message_base = "Sincronizando Información"
         self.tarimas_sync_worker.start()
+
+
 
     def result_tarimas_worker(self,success:bool):
         if success:

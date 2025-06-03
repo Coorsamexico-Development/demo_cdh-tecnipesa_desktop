@@ -6,7 +6,7 @@ from  requests.exceptions import ConnectTimeout
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
     GpoConfigurationModel)
 
-class ApiImpinjDatasource:
+class ApiImpinjGposDatasource:
     def __init__(self):
         pass
 

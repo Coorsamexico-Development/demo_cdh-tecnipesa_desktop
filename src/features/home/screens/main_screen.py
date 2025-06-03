@@ -4,9 +4,10 @@ from PyQt6.QtGui import QIcon
 from features.home.widgets.main_menu import MainMenu
 from features.capture_rfid.presentation.screens.home_screen import HomeScreen
 from features.capture_rfid.infrastructure.datasource.api_impinj_gpos_datasource import (
-    ApiImpinjDatasource)
+    ApiImpinjGposDatasource)
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
     GpoConfigurationModel)
+from features.database.managers.sqlite_manager import SqliteManager
 
 base_path = os.getcwd()
 
@@ -36,8 +37,9 @@ class MainScreen(QMainWindow):
             self.setStyleSheet(f.read())
 
     def closeEvent(self, event):
+        SqliteManager().close_connection()
         print("apagando luces....")
-        datasource = ApiImpinjDatasource()
+        datasource = ApiImpinjGposDatasource()
         datasource.update_gpos(gpo_configurations=self.offLeds())
         print("luces apagadas")
 

@@ -4,11 +4,11 @@ from PyQt6.QtCore import QThread, pyqtSignal
 from features.capture_rfid.infrastructure.models.gpo_configuration_model import (
     GpoConfigurationModel)
 from features.capture_rfid.infrastructure.datasource.api_impinj_gpos_datasource import (
-    ApiImpinjDatasource)
+    ApiImpinjGposDatasource)
 from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 
 class ImpinjGposUseCase:
-    def __init__(self, datasource:ApiImpinjDatasource= ApiImpinjDatasource()):
+    def __init__(self, datasource:ApiImpinjGposDatasource= ApiImpinjGposDatasource()):
         self.datasource = datasource
 
     def update_gpos(self, gpo_configurations:list[GpoConfigurationModel]) -> str:

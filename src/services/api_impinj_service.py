@@ -2,7 +2,7 @@
 import config.constants.enviroments as Enviroments       
 from services.request_service import RequestService
 
-from requests.auth import HTTPBasicAuth
+# from requests.auth import HTTPBasicAuth
 
 class ApiImpinjService(RequestService):
     def __init__(self,
