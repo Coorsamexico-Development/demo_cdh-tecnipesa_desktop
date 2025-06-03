@@ -13,6 +13,7 @@ from features.capture_rfid.infrastructure.constants.constants import COLORS_LED
 import numpy as np
 from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWorker
 from features.database.models.tarima import Tarima
+from features.capture_rfid.presentation.widgets.scaneo_item import ScaneoItem
 
 
 
@@ -78,9 +79,9 @@ class CaptureRfidScreen(QWidget):
         self.cdh_worker.scaneo = scaneo
         self.cdh_worker.start()
 
-    def on_add_scaneo(self,scaneo:ScaneoModel):
+    def on_add_scaneo(self,scaneoItem:ScaneoItem):
             self.message_label.setText("Guardando...")
-            tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneo.tag_inventory_event.epc)
+            tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneoItem.scaneo.tag_inventory_event.epc)
 
             if tarima is not None:
                 # print(f"Encontro la tarima {tarima}")
@@ -91,6 +92,7 @@ class CaptureRfidScreen(QWidget):
                 color = 'yellow'
                 # self.cdh_worker.must_change = True
             print(f"color:{color}___________________________")
+            scaneoItem.updateColor(color)
             self.check_change_color(color)
 
             # self.cdh_worker.start()

@@ -23,11 +23,11 @@ class ListScaneos(QFrame):
     def __init__(self,
                  
                  get_images: Callable[[], list[np.ndarray]],
-                 on_add_scaneo: Callable[[ScaneoModel],None] = lambda x:None,
+                 on_add_scaneo: Callable[[ScaneoItem],None] = lambda x:None,
                  send_scaneo: Callable[[ScaneoModel],None] = lambda x:None 
                  ):
         super().__init__()
-        self.list_scaneos:list[ScaneoModel] =  []
+        self.list_scaneos:list[ScaneoItem] =  []
         self.on_add_scaneo= on_add_scaneo
         self.send_scaneo= send_scaneo
         self.item_seleted = None
@@ -60,18 +60,9 @@ class ListScaneos(QFrame):
         self.impinj_stream_worker.start()
 
     def clear_scaneos(self):
-        self.list_widget.clear()
-        aux_scaneos = []
-        for row,scaneo in enumerate(self.list_scaneos):
-            if scaneo.tag_inventory_event.scond_antenna is None:
-                aux_scaneos.append(scaneo)  
-
-        self.list_scaneos = aux_scaneos
-
-        for scaneo in self.list_scaneos:
-            self.add_scane_item(scaneo)
-
-        
+        for scaneoItem in self.list_scaneos:
+            if scaneoItem.scaneo.tag_inventory_event.scond_antenna is not None:
+                self.remove_scaneo_item(scaneoItem)
 
     def on_receive_scan(self, data):
         dataJson = json.loads(data)
@@ -83,25 +74,27 @@ class ListScaneos(QFrame):
             return
 
 
-        scaneoFind = next((s for s in self.list_scaneos \
-                           if s.tag_inventory_event.epc == scaneo.tag_inventory_event.epc), None)
+        scaneoItemFind = next((scaneoItem for scaneoItem in self.list_scaneos \
+                           if scaneoItem.scaneo.tag_inventory_event.epc == scaneoItem.scaneo.tag_inventory_event.epc), None)
        
-        if scaneoFind is not None:
-            if scaneoFind.tag_inventory_event.scond_antenna is None and \
-                GROUP_ANTENNA[scaneoFind.tag_inventory_event.first_antenna] != GROUP_ANTENNA[scaneo.tag_inventory_event.antenna_port]:
+        if scaneoItemFind is not None:
+            scaneoItemFind.scaneo.count +=1
+            scaneoItemFind.scaneo.tag_inventory_event.antenna_port =scaneo.tag_inventory_event.antenna_port
+
+            if scaneoItemFind.scaneo.tag_inventory_event.scond_antenna is None and \
+                GROUP_ANTENNA[scaneoItemFind.scaneo.tag_inventory_event.first_antenna] != GROUP_ANTENNA[scaneo.tag_inventory_event.antenna_port]:
                 
-                scaneoFind.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
+                
+                scaneoItemFind.scaneo.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
+
+
                 #mandamos a llamar el scaneo
-                # print(f"finish scane: {scaneoFind}____________________________")
-                self.on_add_scaneo(scaneoFind)
-                # QTimer.singleShot(1000, lambda s=scaneoFind:self.add_scaneo_images(s) )
-                
+                self.on_add_scaneo(scaneoItemFind)
+                QTimer.singleShot(1000, lambda s=scaneoItemFind.scaneo:self.add_scaneo_images(s) )
+
+            scaneoItemFind.updateInfo()
             return 
 
-
-        
-
-        self.list_scaneos.append(scaneo)
         self.add_scane_item(scaneo)
         
 
@@ -114,18 +107,23 @@ class ListScaneos(QFrame):
         # Crear un QListWidgetItem
         item = QListWidgetItem(self.list_widget)
         # Crear un widget personalizado (un QLabel en este caso)
-        scaneoItem = ScaneoItem(scaneo)
+        scaneoItem = ScaneoItem(parent=item,scaneo=scaneo)
         # Establecer el tamaño del item
         item.setSizeHint(scaneoItem.sizeHint())
         # Añadir el widget personalizado al QListWidgetItem
         self.list_widget.setItemWidget(item, scaneoItem)
 
-    def remove_scaneo_item(self ):
-        try:
-            row = self.list_widget.row(self.item_seleted)
-            self.list_widget.takeItem(row)
-            self.item_seleted = None
+        self.list_scaneos.append(scaneoItem)
 
-        except ValueError:
+    def remove_scaneo_item(self, scaneo_item:ScaneoItem ):
+        try:
+            row = self.list_widget.row(scaneo_item._parent)
+            self.list_widget.takeItem(row)
+            self.list_scaneos.remove(scaneo_item)
+            print("remove")
+        
+
+        except ValueError as e :
+            print(e)
             pass
        

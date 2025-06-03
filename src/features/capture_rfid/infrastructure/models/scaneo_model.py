@@ -7,6 +7,7 @@ from features.capture_rfid.infrastructure.models.tag_inventory import TagInvento
 class ScaneoModel:
     def __init__(self, timestamp:str, event_type:str, tag_inventory_event:TagInventory
                     ):
+        self.count = 1
         self.timestamp = timestamp
         self.event_type = event_type
         self.tag_inventory_event = tag_inventory_event
