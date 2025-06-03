@@ -25,7 +25,8 @@ class CaptureRfidScreen(QWidget):
 
         self.list_scaneos = ListScaneos(
             get_images=lambda: self.get_images(),
-            on_add_scaneo=self.on_add_scaneo
+            on_add_scaneo=self.on_add_scaneo,
+            send_scaneo=self.send_scaneo
         )
         self.panels_videos = PanelsVideo()
         self.resp_colors = set()
@@ -53,7 +54,7 @@ class CaptureRfidScreen(QWidget):
 
     def _result_worker_cdh(self, color:str, must_change:bool):
         if len(self.resp_colors) > 0:
-            QTimer.singleShot(1500, lambda: self.off_leds())
+            QTimer.singleShot(2500, lambda: self.off_leds())
         if must_change:
             self.check_change_color(color)
 
@@ -69,7 +70,7 @@ class CaptureRfidScreen(QWidget):
 
 
     def _result_worker_gpos(self):
-       
+        print(self.gpos_worker.error)
         self.message_label.setText("")    
 
         # self.message_label.setText('')
@@ -78,17 +79,18 @@ class CaptureRfidScreen(QWidget):
         self.cdh_worker.start()
 
     def on_add_scaneo(self,scaneo:ScaneoModel):
-            # self.message_label.setText("Guardando...")
+            self.message_label.setText("Guardando...")
             tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneo.tag_inventory_event.epc)
 
             if tarima is not None:
                 # print(f"Encontro la tarima {tarima}")
-                self.cdh_worker.must_change = False
+                # self.cdh_worker.must_change = False
                 color = 'green' if tarima.switch else 'red'
                 
             else:
                 color = 'yellow'
                 # self.cdh_worker.must_change = True
+            print(f"color:{color}___________________________")
             self.check_change_color(color)
 
             # self.cdh_worker.start()
@@ -105,7 +107,7 @@ class CaptureRfidScreen(QWidget):
     #actualiza el color de los geos para el worker
     # y reinicia el timer
     def change_color_timer_geo(self, color:str):
-        # print(f"cambiando color: {color}___________")
+        print(f"cambiando color: {color}___________")
         self.gpos_worker.color = color
         self.debounce_gpo_timer.start()
         
