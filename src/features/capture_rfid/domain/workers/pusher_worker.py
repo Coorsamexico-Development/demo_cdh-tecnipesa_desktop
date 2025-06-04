@@ -23,9 +23,9 @@ class PusherWorker(QObject):
     def handle_event(self, event_data):
         data_json = json.loads(event_data)
         print(data_json)
-        if 'tarima' in data_json and data_json['tarima'] is not None:
-            tarima = TarimaModel.fromJson(data_json['tarima'])
-            self.updateOrCreate(tarima)
+        # if 'tarima' in data_json and data_json['tarima'] is not None:
+        #     tarima = TarimaModel.fromJson(data_json['tarima'])
+        #     self.updateOrCreate(tarima)
 
     def start(self):
         self.pusher.connect()
