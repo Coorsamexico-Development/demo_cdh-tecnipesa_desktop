@@ -12,7 +12,7 @@ class PusherWorker(QObject):
     # task_complete = pyqtSignal(TarimaModel)
     def __init__(self):
         super().__init__()
-        self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=True)
+        self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=False)
         self.db_file = SqliteManager().db_file
 
 
@@ -23,7 +23,7 @@ class PusherWorker(QObject):
 
     def handle_event(self, event_data):
         data_json = json.loads(event_data)
-        print(data_json)
+        # print(data_json)
         if 'tarima' in data_json and data_json['tarima'] is not None:
             tarima = TarimaModel.fromJson(data_json['tarima'])
             # self.task_complete.emit(tarima)
