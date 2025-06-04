@@ -66,8 +66,9 @@ class ListScaneos(QFrame):
 
     def on_receive_scan(self, data):
         dataJson = json.loads(data)
-        scaneo = ScaneoAdapter.fromJson(dataJson)
-        self.add_scaneo_item(scaneo)
+        if "tagInventoryEvent" in dataJson:
+            scaneo = ScaneoAdapter.fromJson(dataJson)
+            self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
         if scaneo.tag_inventory_event.epc == "E2801191A5030065E024AA03":
