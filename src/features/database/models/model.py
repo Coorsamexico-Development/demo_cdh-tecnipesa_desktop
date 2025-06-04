@@ -25,15 +25,16 @@ class Model:
             'table': table_name,
             '_exist': False
         }
-        self._connection:Union[Connection,None] = None
+        self._connection = SqliteManager().get_connection()
         for key, value in kwargs.items():
             if key == '_connection':
                 self._connection = value
                 continue
+
             self._attributes[key] = value
             self._original_attributes[key] = value
-        if self._connection is None:
-            self._connection = SqliteManager().get_connection()
+
+        
             
 
     def __setattr__(self, name, value):

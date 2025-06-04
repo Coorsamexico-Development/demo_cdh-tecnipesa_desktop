@@ -4,15 +4,16 @@ from services.pusher_service import PusherService
 import sqlite3
 from features.database.managers.sqlite_manager import SqliteManager
 from features.capture_rfid.infrastructure.models.tarima_model import TarimaModel
+from features.database.models.tarima_in_pusher import TarimaInPusher
+from PyQt6.QtCore import pyqtSignal
 from features.database.models.tarima import Tarima
 
-
 class PusherWorker(QObject):
-
+    # task_complete = pyqtSignal(TarimaModel)
     def __init__(self):
         super().__init__()
-        self.conn = sqlite3.connect('database.sqlite')
         self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=True)
+        self.db_file = SqliteManager().db_file
 
 
     def connect_handler(self,_):
@@ -25,21 +26,22 @@ class PusherWorker(QObject):
         print(data_json)
         if 'tarima' in data_json and data_json['tarima'] is not None:
             tarima = TarimaModel.fromJson(data_json['tarima'])
+            # self.task_complete.emit(tarima)
             self.updateOrCreate(tarima)
 
     def start(self):
         self.pusher.connect()
 
-
     def updateOrCreate(self, tarima:TarimaModel = None ):
-
-        tarimaDB:Tarima = Tarima.select('*', _connect = self.conn)
+        connection = sqlite3.connect(self.db_file)
+        #Se pudo crear otro clase con un TarimaInPusher para darle otra conexión
+        tarimaDB = Tarima.select('*',_connection=connection)
 
         try:
             tarimaDB =  tarimaDB.find(tarima.id)
             if tarimaDB is None:
                tarimaDB = Tarima.create(
-                    _connection = self.conn,
+                    _connection=connection,
                     id=  tarima.id,
                     lpn  = tarima.lpn,
                     token_tag =  tarima.token_tag,

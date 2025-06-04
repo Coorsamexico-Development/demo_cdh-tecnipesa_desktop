@@ -132,7 +132,7 @@ class CollectionDB:
             for i,value in enumerate(row):
                 params[columnas[i]] = value
 
-            list_intances.append(self.cls(**params))
+            list_intances.append(self.cls(_connection=self._connection,**params))
         cursor.close()
     
 
