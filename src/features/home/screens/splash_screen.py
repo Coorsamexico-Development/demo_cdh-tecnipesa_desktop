@@ -5,27 +5,34 @@ from features.database.managers.sqlite_manager import SqliteManager
 from features.database.migrations.creates_tables import CreateTables
 from features.capture_rfid.domain.workers.tarimas_sync_worker import TarimasSyncWorker
 from features.home.workers.impinj_start_worker import ImpinjStartWoker
+import os
 
 class FadeSplashScreen(QSplashScreen):
     def __init__(self, on_finished):
         super().__init__()
         self.on_finished = on_finished
-
-
-        pixmap = QPixmap(600, 300)
+        width, height = 600, 300
+        pixmap = QPixmap(width, height)
         pixmap.fill(QColor("#BF2626"))
-        self.setFont(QFont("Segoe UI", 30, QFont.Weight.Bold))
         self.setPixmap(pixmap)
 
 
-        # Draw "Word"
+        self.logo = QPixmap(os.path.join(os.getcwd(),'assets','images', "logo_coorsa_white.png"))  # Tu logo PNG
+        self.logo = self.logo.scaled(400, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+
+        # Pintar el logo y texto en el splash
         painter = QPainter(pixmap)
-        painter.setPen(Qt.GlobalColor.white)
-        painter.drawText(pixmap.rect(), Qt.AlignmentFlag.AlignCenter, "Coorsamexico")
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.drawPixmap((width - self.logo.width()) // 2, 50, self.logo)  # Centrado horizontal arriba
+      
+        # painter.setPen(Qt.GlobalColor.white)
+        # painter.drawText(pixmap.rect().adjusted(0, 130, 0, 0), Qt.AlignmentFlag.AlignHCenter, "Word")
 
-        font_small = QFont("Segoe UI", 12)
-        painter.setFont(font_small)
-
+        # font_small = QFont("Segoe UI", 12)
+        # painter.setFont(font_small)
+        
+        painter.end()
+        
 
 
         self.message_base = "Iniciando"
@@ -35,17 +42,18 @@ class FadeSplashScreen(QSplashScreen):
         self.setFont(QFont("Segoe UI", 10))
         self.setStyleSheet("color: white")
 
+        self.setPixmap(pixmap)
+
+        # Animar puntos
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_message)
-        self.timer.start(300)
+        self.timer.start(400)
 
         # Para controlar la opacidad
         self._opacity = 1.0
         self.setWindowOpacity(self._opacity)
 
-        painter.end()
 
-        self.setPixmap(pixmap)
 
 
         self.tarimas_sync_worker = TarimasSyncWorker()
