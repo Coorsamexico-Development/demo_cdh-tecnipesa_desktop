@@ -11,8 +11,8 @@ class PusherWorker(QObject):
 
     def __init__(self):
         super().__init__()
-        self.conn = sqlite3.connect(SqliteManager().db_file)
-        self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=False)
+        self.conn = sqlite3.connect('database.sqlite')
+        self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=True)
 
 
     def connect_handler(self,_):
@@ -22,8 +22,8 @@ class PusherWorker(QObject):
 
     def handle_event(self, event_data):
         data_json = json.loads(event_data)
-        # print(data_json)
-        if 'tarima' in data_json:
+        print(data_json)
+        if 'tarima' in data_json and data_json['tarima'] is not None:
             tarima = TarimaModel.fromJson(data_json['tarima'])
             self.updateOrCreate(tarima)
 

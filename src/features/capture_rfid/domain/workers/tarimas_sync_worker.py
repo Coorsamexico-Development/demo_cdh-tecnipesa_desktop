@@ -30,7 +30,7 @@ class TarimasSyncWorker(QThread):
         try:
             last_tarima = Tarima.select('*').orderBy('tarimas.updated_at', 'desc').first()
             next_page = None
-            updated_at = last_tarima.updated_at.replace("/", "-") if last_tarima else None
+            updated_at = last_tarima.updated_at if last_tarima else None
             print(updated_at)
             while True:
                 tarimas_paginated = self.api_tarimas.get_pagination(
