@@ -6,6 +6,7 @@ a = Analysis(
     datas=[
         ('.env','.'),
         ('assets\\icons\\logo.png','assets\\icons'),
+        ('assets\\images\\logo_coorsa_white.png','assets\\images'),
         ('assets\\styles\\styles.qss','assets\\styles'),
     ],
     hiddenimports=[],
