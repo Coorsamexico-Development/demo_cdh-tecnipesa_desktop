@@ -122,8 +122,6 @@ class ListScaneos(QFrame):
             row = self.list_widget.row(scaneo_item._parent)
             self.list_widget.takeItem(row)
             self.list_scaneos.remove(scaneo_item)
-            print("remove")
-        
 
         except ValueError as e :
             print(e)
