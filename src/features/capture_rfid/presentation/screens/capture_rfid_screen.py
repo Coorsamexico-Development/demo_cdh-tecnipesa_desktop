@@ -91,7 +91,7 @@ class CaptureRfidScreen(QWidget):
             else:
                 color = 'yellow'
                 # self.cdh_worker.must_change = True
-            print(f"color:{color}___________________________")
+            # print(f"color:{color}___________________________")
             scaneoItem.updateColor(color)
             self.check_change_color(color)
 
@@ -109,7 +109,7 @@ class CaptureRfidScreen(QWidget):
     #actualiza el color de los geos para el worker
     # y reinicia el timer
     def change_color_timer_geo(self, color:str):
-        print(f"cambiando color: {color}___________")
+        # print(f"cambiando color: {color}___________")
         self.gpos_worker.color = color
         self.debounce_gpo_timer.start()
         
