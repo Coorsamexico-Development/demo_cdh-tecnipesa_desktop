@@ -12,7 +12,7 @@ class PusherWorker(QObject):
     # task_complete = pyqtSignal(TarimaModel)
     def __init__(self):
         super().__init__()
-        self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=True)
+        self.pusher:PusherService = PusherService(connect_handler=self.connect_handler, show_logging=False)
         
 
 
