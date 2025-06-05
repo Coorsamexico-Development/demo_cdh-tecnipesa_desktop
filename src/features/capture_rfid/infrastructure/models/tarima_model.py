@@ -1,4 +1,4 @@
-from datetime import datetime
+# from datetime import datetime
 import json
 from typing import Union
 
@@ -48,10 +48,12 @@ class TarimaModel:
         created_at = None
         updated_at = None
         if 'created_at' in json:
-            created_at = datetime.strptime(json["created_at"], "%Y-%m-%d %H:%M:%S")
+            # created_at = datetime.strptime(json["created_at"], "%Y-%m-%d %H:%M:%S")
+            created_at = json["created_at"]
        
         if 'updated_at' in json:
-            updated_at = datetime.strptime(json["updated_at"], "%Y-%m-%d %H:%M:%S")
+            # updated_at = datetime.strptime(json["updated_at"], "%Y-%m-%d %H:%M:%S")
+            updated_at = json["updated_at"]
         return cls(
                 id=json['id'], 
                 lpn=json['lpn'], 

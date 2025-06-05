@@ -5,7 +5,7 @@ from features.database.managers.sqlite_manager import SqliteManager
 from features.database.migrations.creates_tables import CreateTables
 from features.capture_rfid.domain.workers.tarimas_sync_worker import TarimasSyncWorker
 from features.home.workers.impinj_start_worker import ImpinjStartWoker
-import os
+from config.resource_path import resource_path
 
 class FadeSplashScreen(QSplashScreen):
     def __init__(self, on_finished):
@@ -17,7 +17,7 @@ class FadeSplashScreen(QSplashScreen):
         self.setPixmap(pixmap)
 
 
-        self.logo = QPixmap(os.path.join(os.getcwd(),'assets','images', "logo_coorsa_white.png"))  # Tu logo PNG
+        self.logo = QPixmap(resource_path('assets','images', "logo_coorsa_white.png"))  # Tu logo PNG
         self.logo = self.logo.scaled(400, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
 
         # Pintar el logo y texto en el splash

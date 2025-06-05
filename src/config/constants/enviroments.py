@@ -1,8 +1,9 @@
 from dotenv import load_dotenv, dotenv_values
+from config.resource_path import resource_path
 
 # Load the environment variables
 load_dotenv()
-config = dotenv_values(".env")
+config = dotenv_values(resource_path(".env"))
 
 # Define the environment variables as module-level variables
 apiUrl = config['API_URL']

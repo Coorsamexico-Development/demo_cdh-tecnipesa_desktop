@@ -1,14 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
+import glob
+import os
+
+assets = [(f, os.path.join('assets', os.path.basename(f))) for f in glob.glob('assets/*') ]
+
 a = Analysis(
     ['src\\main.py'],
     pathex=[],
     binaries=[],
-    datas=[
-        ('.env','.'),
-        ('assets\\icons\\logo.png','assets\\icons'),
-        ('assets\\images\\logo_coorsa_white.png','assets\\images'),
-        ('assets\\styles\\styles.qss','assets\\styles'),
-    ],
+    datas=assets+ [('.env','.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

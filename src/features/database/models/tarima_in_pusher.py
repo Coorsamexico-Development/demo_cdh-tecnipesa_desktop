@@ -1,7 +1,7 @@
 from features.database.models.model import Model
-import os
 import sqlite3
-db_file = os.path.join(os.getcwd(), 'assets', 'database', 'database.sqlite')
+from config.resource_path import resource_path
+db_file = resource_path( 'assets', 'database', 'database.sqlite')
 
 class TarimaInPusher(Model):
     

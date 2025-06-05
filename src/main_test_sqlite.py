@@ -3,6 +3,7 @@ from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter
 from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation
 import os
 import sys
+from config.resource_path import resource_path
 
 class FadeSplashScreen(QSplashScreen):
     def __init__(self):
@@ -13,7 +14,7 @@ class FadeSplashScreen(QSplashScreen):
         pixmap.fill(QColor("#2B579A"))  # Fondo azul estilo Word
         # self.setPixmap(pixmap)
 
-        self.logo = QPixmap(os.path.join(os.getcwd(),'assets','images', "logo_coorsa_white.png"))  # Tu logo PNG
+        self.logo = QPixmap(resource_path('assets','images', "logo_coorsa_white.png"))  # Tu logo PNG
         self.logo = self.logo.scaled(400, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
 
         # Pintar el logo y texto en el splash

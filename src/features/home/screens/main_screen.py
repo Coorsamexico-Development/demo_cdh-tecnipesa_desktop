@@ -9,14 +9,15 @@ from features.capture_rfid.infrastructure.models.gpo_configuration_model import 
     GpoConfigurationModel)
 from features.database.managers.sqlite_manager import SqliteManager
 from features.home.datasource.api_impinj_datasource import ApiImpinjDatasource
+from config.resource_path import resource_path
 
-base_path = os.getcwd()
+
 
 class MainScreen(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("DEMO ARCO CDH")
-        self.setWindowIcon(QIcon(os.path.join(os.getcwd(),'assets','icons', "logo.png")))
+        self.setWindowIcon(QIcon(resource_path('assets','icons', "logo.png")))
         self.setGeometry(0, 0, 1280, 720)
         self.menu_bar = MainMenu()
 
@@ -26,7 +27,7 @@ class MainScreen(QMainWindow):
         self.setCentralWidget(currentScreen)
 
         
-        self.apply_styles(os.path.join(base_path, "assets", "styles", "styles.qss"))
+        self.apply_styles(resource_path( "assets", "styles", "styles.qss"))
         # self.setMenuBar(self.menu_bar)
         self.showMaximized()
         # QTimer.singleShot(100,self.add_tabs)

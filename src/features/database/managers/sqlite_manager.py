@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from config.resource_path import resource_path
 
 class SqliteManager:
     _instance = None
@@ -12,7 +13,7 @@ class SqliteManager:
         return cls._instance
 
     def _initialize(self, db_file):
-        self.db_file = os.path.join(os.getcwd(), 'assets', 'database', db_file)
+        self.db_file = resource_path('assets', 'database', db_file)
         if not os.path.exists(self.db_file):
             self.required_migration = True
         self.conn = None

@@ -17,7 +17,6 @@ from features.capture_rfid.domain.workers.cameras_worker import CamerasWorker
 
 global start_time 
 start_time = datetime.now()
-base_path = os.getcwd()
 FILTER_INDEX_CAMERA = 1
 
 class PanelsVideo(QFrame):

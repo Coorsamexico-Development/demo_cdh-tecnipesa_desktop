@@ -4,6 +4,7 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt
 
 from services.camara_service import CamaraInfo, ResolutionInfo
+from config.resource_path import resource_path
 
 
 class ControlsVideoWidget(QHBoxLayout):
@@ -30,7 +31,7 @@ class ControlsVideoWidget(QHBoxLayout):
         self.camaras = camaras
         
     def _init_ui(self):
-        base_icon_path = os.path.join(os.getcwd(),'assets','icons')
+        base_icon_path = resource_path('assets','icons')
         self.icon_play = QIcon(os.path.join(base_icon_path, 'play-circle-outline.png'))
         self.icon_record = QIcon(os.path.join(base_icon_path, 'record-rec.png'))
         icon_camara = QIcon(os.path.join(base_icon_path, 'camera-outline.png'))

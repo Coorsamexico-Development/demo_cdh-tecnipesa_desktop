@@ -10,7 +10,7 @@ from features.shared.errors.sql_error import SqlError
 from typing import Union
 from features.database.managers.sqlite_manager import SqliteManager
 
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 
 
 class TarimasSyncWorker(QThread):
