@@ -18,13 +18,14 @@ class ApiLogerTarimasDatasource:
 
     def store_log(self, tag_inventory:TagInventory,images: np.ndarray)->str:
         payload = {
-                    'token_tag': re.search(r'\b[0-9a-fA-F]+\b',"E2806915000060090126714F").group(),
+                    'token_tag': re.search(r'\b[0-9a-fA-F]+\b',tag_inventory.epc).group(),
                     'first_antenna': tag_inventory.first_antenna,
                     'second_antenna': tag_inventory.scond_antenna,
                 }
         
         files= [('image[]',(f'image_{index}.jpg', imageToBytesIO(image), 'image/jpeg')) 
                 for index,image in enumerate(images)]
+        # files.pop()
         # files = []
       
         try:

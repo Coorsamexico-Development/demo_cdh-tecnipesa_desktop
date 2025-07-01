@@ -17,7 +17,7 @@ from features.capture_rfid.domain.workers.cameras_worker import CamerasWorker
 
 global start_time 
 start_time = datetime.now()
-FILTER_INDEX_CAMERA = 2
+FILTER_INDEX_CAMERA = 1
 
 class PanelsVideo(QFrame):
     def __init__(self, onSave= lambda x,y:None):
@@ -44,8 +44,10 @@ class PanelsVideo(QFrame):
         horizontal_layout.setSpacing(0)
 
         
-        self.cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index >= FILTER_INDEX_CAMERA]
+        self.cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index > FILTER_INDEX_CAMERA]
 
+
+        
         self.capture_camara_times= [CaptureCameraTime(camera=camera) for camera in self.cameras]
 
       

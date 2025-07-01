@@ -71,7 +71,7 @@ class ListScaneos(QFrame):
             self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
-        if scaneo.tag_inventory_event.epc == "E2801191A5030065E024AA03":
+        if scaneo.tag_inventory_event.epc == "E2801191A5030065E024AA03" or scaneo.tag_inventory_event.epc == "E2801191A5030065F26CCB7F":
             return
 
 
