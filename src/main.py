@@ -21,7 +21,7 @@ def show_main():
 
 def start_webserver():
     threading.Thread(target=run_flask, daemon=True).start()
-    threading.Thread(target=WebsocketService.run_websocket_server, daemon=True).start()
+    # threading.Thread(target=WebsocketService.run_websocket_server, daemon=True).start()
 
 if __name__ == '__main__':
     splash = FadeSplashScreen(
