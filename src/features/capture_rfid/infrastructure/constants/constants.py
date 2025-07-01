@@ -3,5 +3,6 @@ COLORS_LED = {
     'green': 1,
     'red': 2,
     'yellow': 3,
+    'blue': 4,
 
 }

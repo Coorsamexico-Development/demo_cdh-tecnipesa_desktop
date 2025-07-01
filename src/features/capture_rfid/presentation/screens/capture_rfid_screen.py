@@ -64,7 +64,7 @@ class CaptureRfidScreen(QWidget):
         # if self.times_led_changed > 10:
         #     return
         if color not in self.resp_colors:
-            if color == 'red' or (color == 'yellow' and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
+            if color == 'red' or ((color == 'yellow' or color == 'blue')and 'red' not in self.resp_colors) or (color == 'green' and len(self.resp_colors) == 0):
                 self.change_color_timer_geo(color)
             
             self.resp_colors.add(color)
@@ -81,7 +81,7 @@ class CaptureRfidScreen(QWidget):
 
     def on_add_scaneo(self,scaneoItem:ScaneoItem):
             self.message_label.setText("Guardando...")
-            tarima = Tarima.select('*').firstWhere('token_tag', '=', scaneoItem.scaneo.tag_inventory_event.epc)
+            tarima = Tarima.select('*').firstWhere('token_tag', 'like', f'%{scaneoItem.scaneo.tag_inventory_event.epc}%')
 
             if tarima is not None:
                 # print(f"Encontro la tarima {tarima}")
@@ -89,7 +89,7 @@ class CaptureRfidScreen(QWidget):
                 color = 'green' if tarima.switch else 'red'
                 
             else:
-                color = 'yellow'
+                color = 'blue'
                 # self.cdh_worker.must_change = True
             # print(f"color:{color}___________________________")
             scaneoItem.updateColor(color)

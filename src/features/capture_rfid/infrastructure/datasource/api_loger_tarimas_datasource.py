@@ -4,7 +4,7 @@ import json
 from features.shared.errors.request_error import RequestError
 from  requests.exceptions import ConnectTimeout
 import io
-
+import re
 import numpy as np
 from services.api_cdh_service import api_cdh_service
 from features.capture_rfid.infrastructure.models.tag_inventory import TagInventory
@@ -18,14 +18,14 @@ class ApiLogerTarimasDatasource:
 
     def store_log(self, tag_inventory:TagInventory,images: np.ndarray)->str:
         payload = {
-                    'token_tag': tag_inventory.epc,
+                    'token_tag': re.search(r'\b[0-9a-fA-F]+\b',"E2806915000060090126714F").group(),
                     'first_antenna': tag_inventory.first_antenna,
-                    'scond_antenna': tag_inventory.scond_antenna,
+                    'second_antenna': tag_inventory.scond_antenna,
                 }
         
         files= [('image[]',(f'image_{index}.jpg', imageToBytesIO(image), 'image/jpeg')) 
                 for index,image in enumerate(images)]
-
+        # files = []
       
         try:
             response = api_cdh_service.post('logtarima', data=payload, files=files)

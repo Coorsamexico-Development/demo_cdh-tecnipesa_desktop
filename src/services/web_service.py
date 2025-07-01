@@ -67,7 +67,7 @@ def stream():
 def storeLogtarima():
     # Enviar mensaje a todos los WebSocket conectados
 
-    colors = ["yellow","green","red", "yellow"]
+    colors = ["blue","green","red", "blue"]
     color =  colors[randint(0, len(colors)-1)]
     data =request.form
     print(f"Color response: {color}, data: {data}")

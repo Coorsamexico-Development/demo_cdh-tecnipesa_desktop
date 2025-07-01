@@ -33,6 +33,9 @@ class CdhTarimasWorker(QThread):
                 tag_inventory=self.scaneo.tag_inventory_event,
                 images=images
                 )
+            # IMPORTANTE SOLO EVITA QUE EL SERVIDOR PONGA YELLOW
+            if(color == 'yellow'): 
+                color = 'blue'
             self.task_complete.emit(color,self.must_change)
 
 
@@ -42,7 +45,7 @@ class CdhTarimasWorker(QThread):
         except RequestError as e:
             self.has_error = True
             self.error = e
-            self.task_complete.emit( 'yellow', self.must_change)
+            self.task_complete.emit( 'blue', self.must_change)
 
 
 

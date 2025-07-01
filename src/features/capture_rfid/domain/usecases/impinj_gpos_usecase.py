@@ -32,7 +32,7 @@ class ImpinjGposWoker(QThread):
 
     def colorsLeds(self):
         num_color = COLORS_LED[self.color]
-        bin_numers = list(bin(num_color)[2:].rjust(2, '0')[::-1])
+        bin_numers = list(bin(num_color)[2:].rjust(3, '0')[::-1])
         leds = [GpoConfigurationModel(
                 gpo=index+1,
                 state=GpoConfigurationModel.StateGeo.HIGH if bin_numer == '1' else GpoConfigurationModel.StateGeo.LOW
