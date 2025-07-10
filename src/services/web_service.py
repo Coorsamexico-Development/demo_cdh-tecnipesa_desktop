@@ -59,7 +59,7 @@ def stream():
                 }
             }
             yield json.dumps(data) + "\n"
-            time.sleep(1)
+            time.sleep(10)
     return Response(generate(), mimetype='text/event-stream')
 
 
@@ -77,6 +77,30 @@ def storeLogtarima():
             "color": color,
 
         }
+    }
+@flask_app.get('/api/v1/tarima')
+def getTarimas():
+    # Enviar mensaje a todos los WebSocket conectados
+
+    # colors = ["blue","green","red", "blue"]
+    # color =  colors[randint(0, len(colors)-1)]
+    # data =request.form
+    # print(f"Color response: {color}, data: {data}")
+    data =request.get_json()
+
+    print(f"tarima api: {data}")
+
+    return {
+
+        "current_page": 1,
+        "data": [],
+        "first_page_url": "/api/v1/tarima",
+        "from_page": 1,
+        "next_page_url": None,
+        "path": "tarima",
+        "per_page": 100,
+        "prev_page_url": None,
+        "to": None,
     }
 
 

@@ -17,7 +17,7 @@ from features.capture_rfid.domain.workers.cameras_worker import CamerasWorker
 
 global start_time 
 start_time = datetime.now()
-FILTER_INDEX_CAMERA = 1
+FILTER_INDEX_CAMERA = -1
 
 class PanelsVideo(QFrame):
     def __init__(self, onSave= lambda x,y:None):
@@ -83,15 +83,17 @@ class PanelsVideo(QFrame):
         self.principal_camera_index  = principal_index
         for index,camara_time in enumerate(self.capture_camara_times):
 
-            if index > len(self.list_view_camaras.scroll_layout):
+            if index > len(self.list_view_camaras.camaras_layout):
                 return
        
-            camara_viewer_in_list:ViewCamaraItem =  self.list_view_camaras.scroll_layout.itemAt(index).widget()
+            camara_viewer_in_list:ViewCamaraItem =  self.list_view_camaras.camaras_layout.itemAt(index).widget()
             camara_viewer:CameraViewerWidget = camara_viewer_in_list.camera_viewer
 
             camara_viewers = [camara_viewer]
+            # para mostrarlo en la principal le indicampos donde deberia mostrarse
             if index == principal_index:
                 camara_viewers.append(self.principal_camera_viewer)
+
             camara_time.on_update_frame = lambda frame, camara_viewers=camara_viewers: update_images_viewer(frame=frame, camara_viewers=camara_viewers)
             camara_time.startCapture()
 
@@ -134,8 +136,8 @@ class PanelsVideo(QFrame):
             # Detener las camaras actuales
             for camara_time in self.capture_camara_times:
                 camara_time.stopCapture()
-            self.list_view_camaras.remove_camaras()
-            # Reiniciar las camaras con las nuevas camaras
+            
+            #Reiniciar las camaras con las nuevas camaras
             self.cameras = self.cameras_worker.cameras
             self.capture_camara_times= [CaptureCameraTime(camera=camera) for camera in self.cameras]
 

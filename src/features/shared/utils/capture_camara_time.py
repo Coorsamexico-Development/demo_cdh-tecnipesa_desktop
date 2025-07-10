@@ -13,6 +13,7 @@ class CaptureCameraTime:
                  on_save_frame= lambda frame,image_name:None,
                  on_stop_record= lambda: None,
                  auto_start:bool = False,
+                 min_resolution:int=720,
                  ):
         super().__init__()
         self.resolution_index = None
@@ -27,7 +28,7 @@ class CaptureCameraTime:
         # total_resolution = len(self.camera.resolutions)
         # if total_resolution > 0:
         for resolution in self.camera.resolutions:
-            if resolution.height >= 720:
+            if resolution.height >= min_resolution:
                 self.setResolutionIndex(resolution.index)
                 break
 

@@ -26,12 +26,9 @@ class CdhTarimasWorker(QThread):
     def run(self):
         self.colorsResp = []
         try:
-
-           
-            images=self.scaneo.images.copy()
             color = self.api_cdh_tarimas.store_log(
                 tag_inventory=self.scaneo.tag_inventory_event,
-                images=images
+                images=self.scaneo.images
                 )
             # IMPORTANTE SOLO EVITA QUE EL SERVIDOR PONGA YELLOW
             if(color == 'yellow'): 

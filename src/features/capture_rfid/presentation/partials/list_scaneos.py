@@ -17,7 +17,10 @@ GROUP_ANTENNA = {
     3: 'group_2',
     4: 'group_2',
 }
-
+BLACK_LIST_EPC = [
+    "E2801191A5030065E024AA03",
+    "E2801191A5030065F26CCB7F",
+]
 
 class ListScaneos(QFrame):
     def __init__(self,
@@ -61,6 +64,7 @@ class ListScaneos(QFrame):
 
     def clear_scaneos(self):
         for scaneoItem in self.list_scaneos:
+            #deben tener imagen ya que solo los que no tienen aun no se toma su fotografia
             if len(scaneoItem.scaneo.images) > 0:
                 self.remove_scaneo_item(scaneoItem)
 
@@ -71,7 +75,7 @@ class ListScaneos(QFrame):
             self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
-        if scaneo.tag_inventory_event.epc == "E2801191A5030065E024AA03" or scaneo.tag_inventory_event.epc == "E2801191A5030065F26CCB7F":
+        if scaneo.tag_inventory_event.epc in BLACK_LIST_EPC:
             return
 
 

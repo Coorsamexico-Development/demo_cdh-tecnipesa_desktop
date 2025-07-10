@@ -37,11 +37,11 @@ class ListViewCamaras(QWidget):
         
         scroll_content.setProperty("class", "bg_dark")
 
-        self.scroll_layout = QVBoxLayout(scroll_content)
-        self.scroll_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.camaras_layout = QVBoxLayout(scroll_content)
+        self.camaras_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        self.scroll_layout.setContentsMargins(0, 0, 0, 0)
-        self.scroll_layout.setSpacing(0)
+        self.camaras_layout.setContentsMargins(0, 0, 0, 0)
+        self.camaras_layout.setSpacing(0)
         
         self.scroll_area.setWidget(scroll_content)
 
@@ -71,7 +71,7 @@ class ListViewCamaras(QWidget):
     def descative_other_menus(self,view_camara_item:ViewCamaraItem):
         for index in  range(len(self._camaras)):
             if index != view_camara_item.index:
-                camara_item:ViewCamaraItem = self.scroll_layout.itemAt(index).widget()
+                camara_item:ViewCamaraItem = self.camaras_layout.itemAt(index).widget()
                 camara_item.is_active = False
 
     def update_camaras(self):
@@ -81,17 +81,17 @@ class ListViewCamaras(QWidget):
                 camara = camara,
                 on_click = self.on_click,
             )
-            self.scroll_layout.addWidget(carama_item)
+            self.camaras_layout.addWidget(carama_item)
 
     def remove_camaras(self):
-        self.scroll_layout
-        for index in range(self.scroll_layout.count()):
-            item = self.scroll_layout.itemAt(index)
-            self.scroll_layout.removeItem(item)
-            if item is None:
+        while self.camaras_layout.count():
+            item = self.camaras_layout.takeAt(0)
+            widget = item.widget()
+            if widget is None:
                 continue
-            item.widget().deleteLater()
-        print(f"Total camaras removidas: {self.scroll_layout.count()}")
+            
+            widget.deleteLater()
+        print(f"Total camaras removidas: {self.camaras_layout.count()}")
 
     def clear_layout(self):
         for index in range(self.main_layout.count()):
