@@ -118,6 +118,7 @@ class CaptureCameraTime:
         
         self.frame = frame
         self.on_update_frame(self.frame)
+        self.frame = None
 
         if self.is_recording:
             image_time = self.getImageTime()
