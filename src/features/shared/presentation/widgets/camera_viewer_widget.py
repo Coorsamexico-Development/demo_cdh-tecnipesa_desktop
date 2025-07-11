@@ -11,7 +11,7 @@ class CameraViewerWidget(QFrame):
     def __init__(self, 
                  title:str = "SIN SEÑAL",
                  add_custome_mask= lambda frame: None,
-                 with_mask_camara:bool = True
+                 with_mask_camara:bool = False
                  ):
         super().__init__()
 
@@ -78,8 +78,9 @@ class CameraViewerWidget(QFrame):
         frame_show = cv2.resize(frame_show, (w, h))
         bytes_per_line = ch * w
         
-        convert_to_Qt_format = QImage(frame_show.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-        self.video_label.setPixmap(QPixmap.fromImage(convert_to_Qt_format))
+        
+        self.last_qimage = QImage(frame_show.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+        self.video_label.setPixmap(QPixmap.fromImage(self.last_qimage))
        
 
     def mask_camara(self, frame:np.ndarray, 

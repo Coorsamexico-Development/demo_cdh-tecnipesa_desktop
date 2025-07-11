@@ -1,3 +1,4 @@
+
 import sys
 from PyQt6.QtWidgets import QApplication
 from features.home.screens.main_screen import MainScreen
@@ -7,7 +8,6 @@ import threading
 from services.websocket_service import WebsocketService
 from services.web_service import run_flask
 from features.home.screens.splash_screen import FadeSplashScreen
-    
 
 
 app = QApplication(sys.argv)
