@@ -11,10 +11,12 @@ class FrameGrabber(QObject):
         self.running = False
 
 
-    def run(self):
-        print("Entento de guardado")
+    def start(self):
+        
+        self.running = True
         while self.running:
             self.filter_graph.grab_frame()
             QThread.msleep(30) # 30 FPS
     def stop(self):
         self.running = False
+  

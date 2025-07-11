@@ -1,9 +1,8 @@
 from services.camara_service import CamaraInfo
-from  PyQt6.QtCore import QThread,QTimer
+from PyQt6.QtCore import QTimer
 from pygrabber.dshow_graph import FilterGraph
 import numpy as np
 from datetime import datetime
-from features.shared.utils.wokers.frame_grabber import FrameGrabber
 
 global start_time 
 start_time = datetime.now()
@@ -25,11 +24,7 @@ class CaptureCameraTime:
         self.on_save_frame = on_save_frame
         self.graph = FilterGraph()
         self.is_recording = False
-       
-        self.grabber = FrameGrabber(self.graph)
-
-       
-       
+        self.capture_started = False
         # total_resolution = len(self.camera.resolutions)
         # if total_resolution > 0:
         for resolution in self.camera.resolutions:
@@ -37,16 +32,9 @@ class CaptureCameraTime:
                 self.setResolutionIndex(resolution.index)
                 break
 
-        
-       
-        self.thread_grabber = QThread()
-        self.grabber.moveToThread(self.thread_grabber)
-        
-        self.thread_grabber.started.connect(self.grabber.run)
-        
-        # self.grabber.frame_ready.connect(self.update_frame)
+        self.timer = QTimer()
 
-
+        self.timer.timeout.connect(self.graph.grab_frame)
 
         if auto_start:
             self.startCapture()
@@ -57,26 +45,26 @@ class CaptureCameraTime:
         QTimer.singleShot(20, self._startCapture)
 
     def _startCapture(self):
-        if self.grabber.running:
+        if self.capture_started:
             return
 
         if self.camera is not None and self.resolution_index is not None:
             self.setSettings()
-            self.grabber.running = True
-            self.thread_grabber.start()
+            self.capture_started = True
+            self.timer.start(60)
 
     def stopCapture(self):
-        if self.grabber.running:
-                self.grabber.stop()
-                self.thread_grabber.quit()
+        if self.capture_started:
                 self.graph.stop()
                 self.graph.remove_filters()
+                self.timer.stop()
+                self.capture_started = False
         self._stopRecord()
 
 
     def setResolutionIndex(self, index:int):
         self.resolution_index = index
-        if self.grabber.running:
+        if self.capture_started:
             self.setSettings()
 
 
@@ -116,9 +104,8 @@ class CaptureCameraTime:
    
     def update_frame(self, frame:np.ndarray):
         
-        self.frame = frame
+        self.frame = frame.copy()
         self.on_update_frame(self.frame)
-        self.frame = None
 
         if self.is_recording:
             image_time = self.getImageTime()
