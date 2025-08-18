@@ -52,7 +52,7 @@ class CaptureCameraTime:
             self.setSettings()
             self.capture_started = True
             #frames for secounds
-            self.timer.start(17)
+            self.timer.start(50)
 
     def stopCapture(self):
         if self.capture_started:
@@ -107,7 +107,7 @@ class CaptureCameraTime:
         
         self.frame = frame
         self.on_update_frame(self.frame)
-        self.frame = None
+        # self.frame = None
 
         if self.is_recording:
             image_time = self.getImageTime()
