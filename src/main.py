@@ -15,7 +15,7 @@ app = QApplication(sys.argv)
 def show_main():
     app.main_window = MainScreen()
     #set window full screen
-    QTimer.singleShot(1000,start_webserver)
+    # QTimer.singleShot(1000,start_webserver)
     app.main_window.show()
     
 

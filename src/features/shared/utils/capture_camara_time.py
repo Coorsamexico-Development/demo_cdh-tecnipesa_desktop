@@ -14,7 +14,7 @@ class CaptureCameraTime:
                  on_save_frame= lambda frame,image_name:None,
                  on_stop_record= lambda: None,
                  auto_start:bool = False,
-                 min_resolution:int=0,
+                 min_resolution:int=720,
                  ):
         super().__init__()
         self.resolution_index = None
