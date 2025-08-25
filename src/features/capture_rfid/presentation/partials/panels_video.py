@@ -17,7 +17,7 @@ from features.capture_rfid.domain.workers.cameras_worker import CamerasWorker
 
 global start_time 
 start_time = datetime.now()
-FILTER_INDEX_CAMERA = 1
+FILTER_INDEX_CAMERA = -1
 
 class PanelsVideo(QFrame):
     def __init__(self, onSave= lambda x,y:None):
@@ -65,13 +65,14 @@ class PanelsVideo(QFrame):
         
         self.cameras_worker = CamerasWorker(filter_index_camera=FILTER_INDEX_CAMERA, cameras=self.cameras)
         
-        self.cameras_worker.was_chenged.connect(self.check_cameras)
+        self.cameras_worker.was_chenged.connect(self.restart_cameras)
     
         
         self.setLayout(horizontal_layout)
         QTimer.singleShot(150, lambda: self._stop_camaras(start_camaras=True))
+        QTimer.singleShot(250, lambda: self.cameras_worker.start())
         
-        self.check_cameras()
+        
 
 
 
@@ -129,13 +130,15 @@ class PanelsVideo(QFrame):
     # revisa las camaras conectadas y si hay cambios en los indices o nombres de las camaras
     # reinicia las camaras y actualiza la lista de camaras
     # si hay cambios en las camaras
-    def check_cameras(self, was_chenged:bool = False):
+    def restart_cameras(self, was_chenged:bool = False):
         if was_chenged:
             print("Camaras cambiaron, reiniciando camaras...")
            
             # Detener las camaras actuales
+            
             for camara_time in self.capture_camara_times:
                 camara_time.stopCapture()
+        
             
             #Reiniciar las camaras con las nuevas camaras
             self.cameras = self.cameras_worker.cameras
@@ -147,7 +150,8 @@ class PanelsVideo(QFrame):
             if len(self.cameras) > 0: 
                 self._start_camaras_time(principal_index= principal_camera_index)
 
-        QTimer.singleShot(1500, self.cameras_worker.start)
+            # Reinicamos el worker para detectar camaras
+            QTimer.singleShot(500, self.cameras_worker.start)
 
    
 # Actualiza las vistas de las camaras con el frame recibido

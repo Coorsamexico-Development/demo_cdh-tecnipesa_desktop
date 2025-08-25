@@ -42,7 +42,7 @@ def stream():
     # Enviar mensaje a todos los WebSocket conectados
     def generate():
         while True:
-            anntena_port =  randint(1, 4)
+            anntena_port =  randint(1, 8)
 
             epcs = ["4oARkaUDAGXybMv_", "4oARkaUDAGXybNAf"]
 
@@ -59,7 +59,10 @@ def stream():
                 }
             }
             yield json.dumps(data) + "\n"
-            time.sleep(10)
+            time.sleep(0.300)
+            if anntena_port == 8:
+                print("<------- FINISH STREAM--->")
+                break
     return Response(generate(), mimetype='text/event-stream')
 
 

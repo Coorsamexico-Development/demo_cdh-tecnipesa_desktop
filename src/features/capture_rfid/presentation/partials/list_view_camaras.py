@@ -91,7 +91,7 @@ class ListViewCamaras(QWidget):
                 continue
             
             widget.deleteLater()
-        print(f"Total camaras removidas: {self.camaras_layout.count()}")
+        # print(f"Total camaras removidas: {self.camaras_layout.count()}")
 
     def clear_layout(self):
         for index in range(self.main_layout.count()):

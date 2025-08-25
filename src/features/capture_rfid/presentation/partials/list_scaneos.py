@@ -10,12 +10,14 @@ from features.capture_rfid.presentation.widgets.scaneo_item import ScaneoItem
 from features.capture_rfid.infrastructure.adapters.scaneo_adapter import ScaneoAdapter
 import numpy as np
 from features.capture_rfid.domain.workers.impinj_stream_worker import ImpinjStreamWorker
+from features.shared.errors.request_error import RequestError
 
 GROUP_ANTENNA = {
     1: 'group_1',
     2: 'group_1',
     3: 'group_2',
     4: 'group_2',
+   
 }
 BLACK_LIST_EPC = [
     "E2801191A5030065E024AA03",
@@ -53,10 +55,27 @@ class ListScaneos(QFrame):
         #proviene del servicio web socket
 
         self.impinj_stream_worker = ImpinjStreamWorker()
-        self.impinj_stream_worker.new_data.connect(self.on_receive_scan)
-        QTimer.singleShot(2000, self.start_stream)
+        self.impinj_stream_worker.new_data.connect(self.add_scaneo_item)
+        self.impinj_stream_worker.error.connect(self.reconnect_stream)
+        
+        # QTimer.singleShot(2000, self.start_stream)
+
+        self.debounce_start_stream = QTimer(self)
+        self.debounce_start_stream.setSingleShot(True)
+        self.debounce_start_stream.setInterval(2000)  # 2000 
+         # Conectar el timeout del timer al método de búsqueda
+        self.debounce_start_stream.timeout.connect(self.start_stream)
+        self.debounce_start_stream.start()
 
     
+
+    def reconnect_stream(self, e:RequestError):
+        if e.title == 'stream':
+            self.debounce_start_stream.setInterval(2000)
+        else: 
+            self.debounce_start_stream.setInterval(10000)
+        
+        self.debounce_start_stream.start()
     
     def start_stream(self):
         print("Iniciando el stream de Impinj")
@@ -68,11 +87,11 @@ class ListScaneos(QFrame):
             if len(scaneoItem.scaneo.images) > 0:
                 self.remove_scaneo_item(scaneoItem)
 
-    def on_receive_scan(self, data):
-        dataJson = json.loads(data)
-        if "tagInventoryEvent" in dataJson:
-            scaneo = ScaneoAdapter.fromJson(dataJson)
-            self.add_scaneo_item(scaneo)
+    # def on_receive_scan(self, data):
+    #     dataJson = json.loads(data)
+    #     if "tagInventoryEvent" in dataJson:
+    #         scaneo = ScaneoAdapter.fromJson(dataJson)
+    #         self.add_scaneo_item(scaneo)
 
     def add_scaneo_item(self, scaneo:ScaneoModel):
         if scaneo.tag_inventory_event.epc in BLACK_LIST_EPC:
@@ -80,17 +99,22 @@ class ListScaneos(QFrame):
 
 
         scaneoItemFind = next((scaneoItem for scaneoItem in self.list_scaneos \
-                           if scaneoItem.scaneo.tag_inventory_event.epc == scaneoItem.scaneo.tag_inventory_event.epc), None)
+                           if scaneoItem.scaneo.tag_inventory_event.epc == scaneo.tag_inventory_event.epc), None)
        
         if scaneoItemFind is not None:
             scaneoItemFind.scaneo.count +=1
             scaneoItemFind.scaneo.tag_inventory_event.antenna_port =scaneo.tag_inventory_event.antenna_port
 
-            if scaneoItemFind.scaneo.tag_inventory_event.scond_antenna is None and \
-                GROUP_ANTENNA[scaneoItemFind.scaneo.tag_inventory_event.first_antenna] != GROUP_ANTENNA[scaneo.tag_inventory_event.antenna_port]:
-                
-                
-                scaneoItemFind.scaneo.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
+            #Validamos que exista la anteneta port
+            total_antennas = len(GROUP_ANTENNA)
+
+            if scaneoItemFind.scaneo.tag_inventory_event.first_antenna <= total_antennas \
+                and scaneo.tag_inventory_event.antenna_port <=total_antennas:
+                if scaneoItemFind.scaneo.tag_inventory_event.scond_antenna is None and \
+                    GROUP_ANTENNA[scaneoItemFind.scaneo.tag_inventory_event.first_antenna] != GROUP_ANTENNA[scaneo.tag_inventory_event.antenna_port]:
+                    
+                    
+                    scaneoItemFind.scaneo.tag_inventory_event.scond_antenna = scaneo.tag_inventory_event.antenna_port
 
 
                 
@@ -101,7 +125,7 @@ class ListScaneos(QFrame):
         scaneoItem = self.add_scane_item(scaneo)
         self.on_add_scaneo(scaneoItem)
         #mandamos a llamar el scaneo
-        QTimer.singleShot(1, lambda s=scaneo:self.add_scaneo_images(s) )
+        QTimer.singleShot(100, lambda s=scaneo:self.add_scaneo_images(s) )
         
 
        

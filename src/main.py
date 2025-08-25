@@ -15,11 +15,17 @@ app = QApplication(sys.argv)
 def show_main():
     app.main_window = MainScreen()
     #set window full screen
-    # QTimer.singleShot(1000,start_webserver)
+    QTimer.singleShot(1000,start_webserver)
     app.main_window.show()
     
 
 def start_webserver():
+    """
+    Inicia el servidor web y el servidor websocket en segundo plano,
+    este m todo es llamado desde el splash screen, y una vez iniciado
+    el servidor web, se muestra la pantalla principal de la aplicaci n.
+    """
+    
     threading.Thread(target=run_flask, daemon=True).start()
     # threading.Thread(target=WebsocketService.run_websocket_server, daemon=True).start()
 

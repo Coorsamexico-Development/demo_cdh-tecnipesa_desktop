@@ -62,6 +62,7 @@ class CaptureCameraTime:
                 self.frame_graber.stop()
                 self.graph.stop()
                 self.graph.remove_filters()
+                self.thread_grabber.quit()
         self._stopRecord()
 
 

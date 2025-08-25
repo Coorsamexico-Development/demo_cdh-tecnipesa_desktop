@@ -1,12 +1,15 @@
 from PyQt6.QtCore import QThread, pyqtSignal
+import json
 from requests.exceptions import ConnectTimeout
 from services.api_impinj_service import api_impinj
 from features.shared.errors.request_error import RequestError
+from features.capture_rfid.infrastructure.adapters.scaneo_adapter import ScaneoAdapter
+from features.capture_rfid.infrastructure.models.scaneo_model import ScaneoModel
 
 
 
 class ImpinjStreamWorker(QThread):
-    new_data = pyqtSignal(str)
+    new_data = pyqtSignal(ScaneoModel)
     error = pyqtSignal(RequestError)
 
     
@@ -16,7 +19,16 @@ class ImpinjStreamWorker(QThread):
             with api_impinj.get('/data/stream', stream=True) as response:
                 for line in response.iter_lines():
                     if line:
-                        self.new_data.emit(line.decode('utf-8'))
+                        dataJson = json.loads(line.decode('utf-8'))
+                        if "tagInventoryEvent" in dataJson:
+                            scaneo = ScaneoAdapter.fromJson(dataJson)
+                            self.new_data.emit(scaneo)
+                        
+
+                self.error.emit(RequestError(title="stream",
+                                message="Finalizo el stream", 
+                                code=500))
+
         
         except ConnectTimeout as e:
             self.error.emit(RequestError(title="Sin conexion a la api",

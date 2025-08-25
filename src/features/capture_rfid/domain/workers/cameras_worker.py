@@ -15,12 +15,27 @@ class CamerasWorker(QThread):
        
 
     def run(self):
-        cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index > self.filter_index_camera]
-        was_chenged = cameras != self.cameras
-        if was_chenged:
-            self.cameras = cameras
-            # Emit signal to notify that the cameras have changed
-        self.was_chenged.emit(was_chenged)
+        try:
+
+            while self.isRunning():
+                cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index > self.filter_index_camera]
+                was_chenged = cameras != self.cameras
+                if was_chenged:
+                    self.cameras = cameras
+                    # Emit signal to notify that the cameras have changed
+                    self.was_chenged.emit(was_chenged)
+                    break
+                
+                self.msleep(1500)
+            
+
+
+
+        except Exception as e:
+            print(f"Error worker cameras: {e}")
+
+
+        
 # class ResponseGpos: 
 #     def __init__(self):
 #         self.resp:str = ""
