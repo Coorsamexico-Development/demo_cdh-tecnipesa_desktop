@@ -8,7 +8,6 @@ from services.camara_service import CamaraInfo,get_camera_info
 from features.shared.utils.capture_camara_cv2 import CaptureCamera
 from features.shared.presentation.widgets.camera_viewer_widget import CameraViewerWidget
 from features.capture_rfid.presentation.widgets.view_camara_item import ViewCamaraItem
-from typing import Tuple
 import numpy as np
 
 from pygrabber.dshow_graph import FilterGraph
