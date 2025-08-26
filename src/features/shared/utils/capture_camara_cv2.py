@@ -8,7 +8,7 @@ from features.shared.utils.wokers.frame_cv2 import FrameCv2
 global start_time 
 start_time = datetime.now()
 
-class CaptureCameraTime:
+class CaptureCamera:
     def __init__(self, camera: CamaraInfo,
                  on_update_frame = lambda frame:None, 
                  on_save_frame= lambda frame,image_name:None,
@@ -33,9 +33,9 @@ class CaptureCameraTime:
        
 
 
-        for resolution in self.camera.resolutions:
+        for index,resolution in enumerate(self.camera.resolutions):
             if resolution.height >= min_resolution:
-                self.setResolutionIndex(resolution.index)
+                self.setResolutionIndex(index=index)
                 break
 
         if auto_start:
