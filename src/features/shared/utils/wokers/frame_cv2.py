@@ -1,7 +1,7 @@
 from PyQt6.QtCore import  pyqtSignal, QThread
 
 import numpy as np
-from cv2 import VideoCapture, typing
+from cv2 import VideoCapture
 class FrameCv2(QThread):
 
     frames = pyqtSignal(np.ndarray)

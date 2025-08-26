@@ -2,7 +2,6 @@ from PyQt6.QtCore import QTimer
 import os
 from datetime import datetime
 from PyQt6.QtWidgets import   QHBoxLayout, QFrame,QSizePolicy
-from features.shared.presentation.widgets.capture_video_widget import CaptureVideoWidget
 from features.capture_rfid.presentation.partials.list_view_camaras import ListViewCamaras
 from services.camara_service import CamaraInfo,get_camera_info
 from features.shared.utils.capture_camara_cv2 import CaptureCamera

@@ -5,7 +5,7 @@ from features.home.screens.main_screen import MainScreen
 from PyQt6.QtCore import QTimer
 
 import threading
-from services.websocket_service import WebsocketService
+# from services.websocket_service import WebsocketService
 from services.web_service import run_flask
 from features.home.screens.splash_screen import FadeSplashScreen
 

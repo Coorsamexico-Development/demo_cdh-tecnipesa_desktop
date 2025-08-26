@@ -1,5 +1,5 @@
 from services.camara_service import CamaraInfo
-from PyQt6.QtCore import QTimer,QThread
+from PyQt6.QtCore import QTimer
 import numpy as np
 from datetime import datetime
 import cv2
