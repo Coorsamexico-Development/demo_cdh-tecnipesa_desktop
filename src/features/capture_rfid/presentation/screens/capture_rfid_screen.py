@@ -14,6 +14,7 @@ import numpy as np
 from features.capture_rfid.domain.workers.cdh_tarimas_worker import CdhTarimasWorker
 from features.database.models.tarima import Tarima
 from features.capture_rfid.presentation.widgets.scaneo_item import ScaneoItem
+from features.shared.utils.wokers.frame_direccion_cv2 import StateDirection
 
 
 
@@ -24,17 +25,19 @@ class CaptureRfidScreen(QWidget):
         self.message_label = QLabel("")
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.list_scaneos = ListScaneos(
+        self.list_scaneos_panel = ListScaneos(
             get_images=lambda: self.get_images(),
             on_add_scaneo=self.on_add_scaneo,
-            send_scaneo=self.send_scaneo
+            # send_scaneo=self.send_scaneo
         )
-        self.panels_videos = PanelsVideo()
+        self.panels_videos = PanelsVideo(
+            on_change_direction=self.on_change_direction
+        )
         self.resp_colors = set()
 
         app_layout = AppLayout(
             header=self.message_label,
-            sidebar=self.list_scaneos,
+            sidebar=self.list_scaneos_panel,
             content=self.panels_videos,
         )
 
@@ -75,6 +78,17 @@ class CaptureRfidScreen(QWidget):
         self.message_label.setText("")    
 
         # self.message_label.setText('')
+
+    def on_change_direction(self,direction: StateDirection):
+        self.message_label.setText("Guardando...")
+        if len(self.list_scaneos_panel.list_scaneos) > 0:
+            scaneoItem = self.list_scaneos_panel.list_scaneos[0]
+            scaneo = scaneoItem.scaneo
+            scaneo.images = self.panels_videos.save_frames()
+            scaneo.direction = direction.value
+
+            self.send_scaneo(scaneoItem.scaneo)
+
     def send_scaneo(self, scaneo:ScaneoModel):
         self.cdh_worker.scaneo = scaneo
         self.cdh_worker.start()
@@ -103,7 +117,7 @@ class CaptureRfidScreen(QWidget):
     # apagado de los leds y reincio de los scaneos, respuesta de colores
     def off_leds(self):
         self.change_color_timer_geo('off')
-        self.list_scaneos.clear_scaneos()
+        self.list_scaneos_panel.clear_scaneos()
         self.resp_colors.clear()
     
     #actualiza el color de los geos para el worker

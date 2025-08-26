@@ -125,7 +125,7 @@ class ListScaneos(QFrame):
         scaneoItem = self.add_scane_item(scaneo)
         self.on_add_scaneo(scaneoItem)
         #mandamos a llamar el scaneo
-        QTimer.singleShot(100, lambda s=scaneo:self.add_scaneo_images(s) )
+        # QTimer.singleShot(100, lambda s=scaneo:self.add_scaneo_images(s) )
         
 
        

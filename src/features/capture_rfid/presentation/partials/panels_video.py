@@ -18,12 +18,17 @@ start_time = datetime.now()
 FILTER_INDEX_CAMERA = -1
 
 class PanelsVideo(QFrame):
-    def __init__(self, onSave= lambda x,y:None):
+    def __init__(self, 
+                 onSave= lambda x,y:None,
+                  on_change_direction= lambda direction:None
+                 
+                 ):
         super().__init__()
 
         self.onSave = onSave
         
         self.principal_camera_index =0
+        self.on_change_direction = on_change_direction
         # Esctrura  dataset _json
         self._dataset_json = {}
         self._init_ui()
@@ -92,6 +97,10 @@ class PanelsVideo(QFrame):
             # para mostrarlo en la principal le indicampos donde deberia mostrarse
             if index == principal_index:
                 camara_viewers.append(self.principal_camera_viewer)
+                camara_time.on_change_direction = self.on_change_direction
+                camara_time.with_direction = True
+            else:
+                  camara_time.with_direction = False
 
             camara_time.on_update_frame = lambda frame, camara_viewers=camara_viewers: update_images_viewer(frame=frame, camara_viewers=camara_viewers)
             camara_time.startCapture()

@@ -5,6 +5,7 @@ from datetime import datetime
 import cv2
 from features.shared.utils.wokers.frame_direccion_cv2 import FrameCv2
 
+
 global start_time 
 start_time = datetime.now()
 
@@ -15,6 +16,7 @@ class CaptureCamera:
                  on_stop_record= lambda: None,
                  auto_start:bool = False,
                  min_resolution:int=720,
+                 on_change_direction= lambda direction:None
                  ):
         super().__init__()
         self.resolution_index = None
@@ -24,12 +26,15 @@ class CaptureCamera:
         self.on_update_frame = on_update_frame
         self.on_save_frame = on_save_frame
         self.is_recording = False
+
     
+        self.on_change_direction = on_change_direction
         cv2.VideoCapture()
 
         self.frame_cv2 = FrameCv2( )
         
         self.frame_cv2.frames.connect(self.update_frame)
+        self.frame_cv2.directions.connect(self.on_change_direction)
        
 
 
@@ -40,6 +45,18 @@ class CaptureCamera:
 
         if auto_start:
             self.startCapture()
+
+
+    @property
+    def with_direction(self):
+        return self.frame_cv2.with_direction
+    @with_direction.setter
+    def with_direction(self, value: bool):
+        if not value:
+            self.on_change_direction = lambda direction:None
+        
+        self.frame_cv2.with_direction = value   
+
 
    
 
