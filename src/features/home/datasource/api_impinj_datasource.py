@@ -38,7 +38,7 @@ class ApiImpinjDatasource:
     def stop_presets(self)->str:
         try:
             response = api_impinj.post('/profiles/stop')
-            if not response.ok:
+            if not response.ok and "text" in response :
                 error = json.loads(response.text)
                 title = "Error al actualizar leds"
                 if "message" in error:

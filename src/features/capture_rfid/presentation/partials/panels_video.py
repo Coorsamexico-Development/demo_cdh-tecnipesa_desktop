@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import   QHBoxLayout, QFrame,QSizePolicy
 from features.shared.presentation.widgets.capture_video_widget import CaptureVideoWidget
 from features.capture_rfid.presentation.partials.list_view_camaras import ListViewCamaras
 from services.camara_service import CamaraInfo,get_camera_info
-from features.shared.utils.capture_camara_time import CaptureCameraTime
+from features.shared.utils.capture_camara_time_cv2 import CaptureCameraTime
 from features.shared.presentation.widgets.camera_viewer_widget import CameraViewerWidget
 from features.capture_rfid.presentation.widgets.view_camara_item import ViewCamaraItem
 from typing import Tuple
