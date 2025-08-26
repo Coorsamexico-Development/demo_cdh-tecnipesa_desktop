@@ -37,8 +37,8 @@ class FrameCv2(QThread):
         width = self.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.videoCapture.get(cv2.CAP_PROP_FRAME_HEIGHT)
         min_area = int(width * height * 0.005)
-        start_x_dectect = int( width *  0.1)
-        end_x_dectect = int(width * 0.9)
+        start_x_dectect = int( width *  0.05)
+        end_x_dectect = int(width * 0.95)
         start_y_dectect = int(height * 0.1)
         end_y_dectect = int(height * 0.9)
 
@@ -71,13 +71,15 @@ class FrameCv2(QThread):
                         cv2.circle(frame, (centro_x, centro_y), 2, (0, 0, 255), -1)
 
                         # ver si el objeto (todo el rectngulo) esta dentro del limite
-                        dentro = (x > start_x_dectect + 10 and x + w  < end_x_dectect-10)
+                        dentro = (x > start_x_dectect and x + w  < end_x_dectect)
                         if estaba_dentro and not dentro:
-                            if  x <= start_x_dectect:
+
+                            if x + w >= end_x_dectect:
                                 self.current_direction = StateDirection.SALIDA
-                            else:
+                              
+                            elif x <= start_x_dectect:
                                 self.current_direction = StateDirection.ENTRADA
-                            
+                              
                             self.directions.emit(self.current_direction)
                         estaba_dentro = dentro
             
@@ -89,9 +91,10 @@ class FrameCv2(QThread):
                 if self.current_direction is not None:  
                     cv2.putText(frame, f"Direccion: {self.current_direction.value}", (20, 40), cv2.FONT_ITALIC, 0.7, (0, 0, 255), 2)
                     if self.current_direction == StateDirection.ENTRADA:
-                        cv2.line(frame, (end_x_dectect, start_y_dectect), (end_x_dectect, end_y_dectect), (0, 255, 0), 7) # el color es (0, 255, 0) y el grosor es el ultimo numero
-                    else:     
                         cv2.line(frame, (start_x_dectect, start_y_dectect), (start_x_dectect, end_y_dectect), (0, 255, 0), 7)    
+                    else:     
+                        cv2.line(frame, (end_x_dectect, start_y_dectect), (end_x_dectect, end_y_dectect), (0, 255, 0), 7) # el color es (0, 255, 0) y el grosor es el ultimo numero
+                        
 
             self.frames.emit(frame)
             self.msleep(100)
