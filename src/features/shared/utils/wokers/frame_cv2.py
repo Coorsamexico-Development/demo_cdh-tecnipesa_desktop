@@ -21,15 +21,16 @@ class FrameCv2(QThread):
                 break
 
             self.frames.emit(frame)
+            self.msleep(100)
 
 
 
     def stop(self):
         self.running = False
-        if self.videoCapture is None:
-            return
-        self.videoCapture.release()
-        self.videoCapture = None
+        self.wait()
+        if self.videoCapture is not None:
+            self.videoCapture.release()
+            self.videoCapture = None
         
         
 
