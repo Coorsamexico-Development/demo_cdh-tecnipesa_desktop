@@ -14,7 +14,7 @@ class CaptureCamera:
                  on_update_frame = lambda frame:None, 
                  on_save_frame= lambda frame,image_name:None,
                  on_stop_record= lambda: None,
-                 auto_start:bool = False,
+                 auto_start:bool = True,
                  min_resolution:int=720,
                  on_change_direction= lambda direction:None
                  ):
@@ -79,7 +79,7 @@ class CaptureCamera:
         self.frame_cv2.videoCapture.set(cv2.CAP_PROP_FPS, 30)
         self.frame_cv2.videoCapture.set(cv2.CAP_PROP_FRAME_WIDTH, self.camera.resolutions[self.resolution_index].width)
         self.frame_cv2.videoCapture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.camera.resolutions[self.resolution_index].height)
-        self.frame_cv2.start()
+        # self.frame_cv2.start()
 
     def stopCapture(self):
         if self.frame_cv2.running:
