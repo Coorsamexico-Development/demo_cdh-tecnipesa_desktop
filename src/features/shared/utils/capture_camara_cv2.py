@@ -69,6 +69,7 @@ class CaptureCamera:
 
         if self.camera is not None and self.resolution_index is not None:
             self.setSettings()
+            self.frame_cv2.start()
 
     def setSettings(self):
         if self.is_recording:
