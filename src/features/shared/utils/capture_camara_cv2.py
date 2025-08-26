@@ -3,7 +3,7 @@ from PyQt6.QtCore import QTimer
 import numpy as np
 from datetime import datetime
 import cv2
-from features.shared.utils.wokers.frame_cv2 import FrameCv2
+from features.shared.utils.wokers.frame_direccion_cv2 import FrameCv2
 
 global start_time 
 start_time = datetime.now()
