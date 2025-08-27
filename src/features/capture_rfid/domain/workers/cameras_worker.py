@@ -18,7 +18,7 @@ class CamerasWorker(QThread):
         try:
 
             while self.isRunning():
-                cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index > self.filter_index_camera]
+                cameras: list[CamaraInfo]  = [camera for camera in get_camera_info() if camera.camera_index >= self.filter_index_camera]
                 was_chenged = cameras != self.cameras
                 if was_chenged:
                     self.cameras = cameras
