@@ -15,7 +15,7 @@ class CaptureCamera:
                  on_save_frame= lambda frame,image_name:None,
                  on_stop_record= lambda: None,
                  auto_start:bool = True,
-                 min_resolution:int=720,
+                 min_resolution:int=1080,
                  on_change_direction= lambda direction:None
                  ):
         super().__init__()
