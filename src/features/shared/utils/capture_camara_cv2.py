@@ -15,7 +15,7 @@ class CaptureCamera:
                  on_save_frame= lambda frame,image_name:None,
                  on_stop_record= lambda: None,
                  auto_start:bool = True,
-                 min_resolution:int=1080,
+                 min_resolution:int=720,
                  on_change_direction= lambda direction:None
                  ):
         super().__init__()
@@ -29,35 +29,23 @@ class CaptureCamera:
 
     
         self.on_change_direction = on_change_direction
-        
+        cv2.VideoCapture()
 
-        self.frame_cv2 = None
-        for index,resolution in enumerate(self.camera.resolutions):
-            if resolution.height >= min_resolution:
-                self.resolution_index = index
-                break
-
-        self.frame_cv2 = FrameCv2(
-            camara=self.camera, 
-            resolution=self.camera.resolutions[self.resolution_index],
-         )
+        self.frame_cv2 = FrameCv2( )
         
         self.frame_cv2.frames.connect(self.update_frame)
         self.frame_cv2.directions.connect(self.on_change_direction)
+       
+
+
+        for index,resolution in enumerate(self.camera.resolutions):
+            if resolution.height >= min_resolution:
+                self.setResolutionIndex(index=index)
+                break
 
         if auto_start:
             self.startCapture()
 
-
-    @property
-    def index_resolution(self):
-        return self.resolution_index
-
-    @index_resolution.setter
-    def index_resolution(self, index:int):
-        self.resolution_index = index
-        if self.frame_cv2 is not None and self.frame_cv2.running:
-            self.setSettings()
 
     @property
     def with_direction(self):
@@ -80,6 +68,7 @@ class CaptureCamera:
             return
 
         if self.camera is not None and self.resolution_index is not None:
+            self.setSettings()
             self.frame_cv2.start()
 
     def setSettings(self):
@@ -87,8 +76,10 @@ class CaptureCamera:
             self._stopRecord()
         
         self.frame_cv2.stop()
-        self.frame_cv2.resolution = self.camera.resolutions[self.resolution_index]
-        self.startCapture()
+        self.frame_cv2.videoCapture = cv2.VideoCapture(self.camera.camera_index)
+        self.frame_cv2.videoCapture.set(cv2.CAP_PROP_FPS, 30)
+        self.frame_cv2.videoCapture.set(cv2.CAP_PROP_FRAME_WIDTH, self.camera.resolutions[self.resolution_index].width)
+        self.frame_cv2.videoCapture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.camera.resolutions[self.resolution_index].height)
 
     def stopCapture(self):
         if self.frame_cv2.running:
@@ -96,7 +87,10 @@ class CaptureCamera:
         self._stopRecord()
 
 
-    
+    def setResolutionIndex(self, index:int):
+        self.resolution_index = index
+        if self.frame_cv2.running:
+            self.setSettings()
 
 
    
@@ -121,14 +115,11 @@ class CaptureCamera:
     
 
    
-    def update_frame(self, frame: np.ndarray,  frame_mask:object= None):
-        self.frame = frame
-        if frame_mask is not None:
-            self.on_update_frame(frame_mask)
-        else:
-            self.on_update_frame(frame)
+    def update_frame(self, frame:np.ndarray):
+        
+        self.frame = frame.copy()
+        self.on_update_frame(self.frame)
 
         if self.is_recording:
             image_time = self.getImageTime()
             self.on_save_frame(frame,image_time)
-       
