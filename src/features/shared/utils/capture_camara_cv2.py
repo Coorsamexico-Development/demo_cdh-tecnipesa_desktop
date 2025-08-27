@@ -115,10 +115,13 @@ class CaptureCamera:
     
 
    
-    def update_frame(self, frame:np.ndarray):
+    def update_frame(self, frame:np.ndarray, frame_mask:np.ndarray=None):
         
         self.frame = frame.copy()
-        self.on_update_frame(self.frame)
+        if frame_mask is not None:
+            self.on_update_frame(frame_mask)
+        else:
+            self.on_update_frame(self.frame)
 
         if self.is_recording:
             image_time = self.getImageTime()
