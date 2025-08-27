@@ -3,6 +3,7 @@ from PyQt6.QtCore import  pyqtSignal, QThread
 import numpy as np
 import cv2
 from enum import Enum
+from services.camara_service import CamaraInfo, ResolutionInfo
 
 
 fondo = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40, detectShadows=True) # sustractor de fondo que sirve para detectar movimiento
@@ -20,32 +21,54 @@ class FrameCv2(QThread):
 
 
 
-    def __init__(self, videoCapture:cv2.VideoCapture | None = None, with_direction:bool = False):
+    def __init__(self, 
+                 camara:CamaraInfo, 
+                 resolution:ResolutionInfo | None = None, 
+                 with_direction:bool = False):
         super().__init__()
-        self.videoCapture = videoCapture
+        self.camara = camara
+        self.resolution = resolution
+        self.videoCapture = None
+        
         self.running = False
         self.with_direction = with_direction
         self.current_direction:StateDirection = None
 
 
     def run(self):
+        if self.resolution is None:
+            self.resolution = self.camara.resolutions[0]
+
+        
+        if self.videoCapture is None or not self.videoCapture.isOpened():
+            self.videoCapture =  cv2.VideoCapture(self.camara.camera_index)
+        
+        self.videoCapture.set(cv2.CAP_PROP_FPS, 30)
+        self.videoCapture.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution.width)
+        self.videoCapture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution.height)
         
         self.running = True
        
-        #de declaran incluso cuando no se usan
+        # #de declaran incluso cuando no se usan
         estaba_dentro = False
-        width = self.videoCapture.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height = self.videoCapture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        width = self.resolution.width
+        height = self.resolution.height
         min_area = int(width * height * 0.005)
         start_x_dectect = int( width *  0.05)
         end_x_dectect = int(width * 0.95)
         start_y_dectect = int(height * 0.1)
         end_y_dectect = int(height * 0.9)
+        
 
         while self.running:
+
             ret, frame = self.videoCapture.read()
             if not ret:
+                print("Error al capturar el frame")
                 break
+            
+            print("Capturando el frame")
+
             # para que se detecte el movimiento siempre que se mueva el objeto dentro del rectangulo
             frame_mask = None
             if self.with_direction:
@@ -104,10 +127,7 @@ class FrameCv2(QThread):
 
 
     def stop(self):
-        if self.running:
+        if self.running and self.videoCapture is not None:
             self.running = False
             self.wait()
-            if self.videoCapture is not None and self.videoCapture.isOpened():
-                self.videoCapture.release()
-
-  
+            self.videoCapture.release()
