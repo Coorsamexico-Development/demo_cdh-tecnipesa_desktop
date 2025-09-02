@@ -80,8 +80,9 @@ class CaptureRfidScreen(QWidget):
         # self.message_label.setText('')
 
     def on_change_direction(self,direction: StateDirection):
-        self.message_label.setText("Detectando imagen...")
+        
         if len(self.list_scaneos_panel.list_scaneos) > 0:
+            self.message_label.setText("Enviando...")
             scaneoItem = self.list_scaneos_panel.list_scaneos[0]
             scaneo = scaneoItem.scaneo
             scaneo.images = self.panels_videos.save_frames()

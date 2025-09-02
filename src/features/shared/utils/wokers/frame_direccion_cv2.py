@@ -67,7 +67,7 @@ class FrameCv2(QThread):
                 print("Error al capturar el frame")
                 break
             
-            print("Capturando el frame")
+            # print("Capturando el frame")
 
             # para que se detecte el movimiento siempre que se mueva el objeto dentro del rectangulo
             frame_mask = None
@@ -104,7 +104,7 @@ class FrameCv2(QThread):
                               
                             elif x <= start_x_dectect:
                                 self.current_direction = StateDirection.ENTRADA
-                              
+                            print(f"Direccion was dectected: {self.current_direction}")
                             self.directions.emit(self.current_direction)
                         estaba_dentro = dentro
             

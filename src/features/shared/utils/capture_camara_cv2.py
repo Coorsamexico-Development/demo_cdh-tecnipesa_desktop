@@ -42,7 +42,7 @@ class CaptureCamera:
          )
         
         self.frame_cv2.frames.connect(self.update_frame)
-        self.frame_cv2.directions.connect(self.on_change_direction)
+        self.frame_cv2.directions.connect(self.change_direction)
 
         if auto_start:
             self.startCapture()
@@ -130,4 +130,7 @@ class CaptureCamera:
         if self.is_recording:
             image_time = self.getImageTime()
             self.on_save_frame(frame,image_time)
+
+    def change_direction(self, direction: str):
+        self.on_change_direction(direction)
        
