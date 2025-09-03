@@ -131,6 +131,11 @@ class ListScaneos(QFrame):
        
     def add_scaneo_images(self,scaneo:ScaneoModel):
         scaneo.images = self.get_images()
+        if len(scaneo.images) == 0:
+            scaneoItemFind = next((scaneoItem for scaneoItem in self.list_scaneos \
+                           if scaneoItem.scaneo.tag_inventory_event.epc == scaneo.tag_inventory_event.epc), None)
+            self.remove_scaneo_item(scaneo_item=scaneoItemFind)
+            return
         self.send_scaneo(scaneo)
 
     def add_scane_item(self, scaneo:ScaneoModel)->ScaneoItem:
