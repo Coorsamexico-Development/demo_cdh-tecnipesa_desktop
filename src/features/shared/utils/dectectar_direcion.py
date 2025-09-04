@@ -1,64 +1,83 @@
 import cv2
 import numpy as np
+from collections import deque
 
-video = cv2.VideoCapture(0) 
-fondo = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40, detectShadows=True) # sustractor de fondo que sirve para detectar movimiento
-kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))                               
-area = np.array([[70, 60], [590, 60], [590, 450], [70, 450]])                 
+# Configuración de video
+cap = cv2.VideoCapture(0)
+ret, frame = cap.read()
+if not ret:
+    print("No se pudo acceder a la cámara")
+    exit()
 
-direccion_actual = "" 
-estaba_dentro = False
+# Sustractor de fondo MOG2
+fondo = cv2.createBackgroundSubtractorMOG2(history=200, varThreshold=40, detectShadows=True)
+
+# Línea vertical para cruce
+linea_x = 300
+tolerancia = 10  # margen para el cruce
+
+# Estado
+historial = deque(maxlen=10)  # guardamos últimos 10 centros detectados
+entradas = 0
+salidas = 0
 
 while True:
-    ret, frame = video.read()
-    if ret == False : break
+    ret, frame = cap.read()
+    if not ret:
+        break
 
-    # crea el segundo frame negro0 que muestra solo los pixeles del objeto dentro del rectsangulo
-    mascara = np.zeros(shape=(frame.shape[:2]), dtype = np.uint8) 
-    cv2.rectangle(mascara, (70, 60), (590, 490), 255, -1)
-    imagen_area = cv2.bitwise_and(frame, frame, mask=mascara) 
+    # Preprocesamiento con MOG2
+    fg = fondo.apply(frame)
 
-    # detecta el movimiento del objeto
-    fg = fondo.apply(imagen_area)
-    fg = cv2.morphologyEx(fg, cv2.MORPH_OPEN, kernel)
-    fg = cv2.morphologyEx(fg, cv2.MORPH_CLOSE, kernel)
-    fg = cv2.dilate(fg, None, iterations=5)
-    cv2.imshow('fg', fg)
+    # Limpiar la máscara
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    fg = cv2.morphologyEx(fg, cv2.MORPH_OPEN, kernel, iterations=2)
+    fg = cv2.morphologyEx(fg, cv2.MORPH_CLOSE, kernel, iterations=2)
+    fg = cv2.dilate(fg, None, iterations=2)
+
+    # Buscar contornos
     contornos, _ = cv2.findContours(fg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if contornos:
         contorno_mayor = max(contornos, key=cv2.contourArea)
-        if cv2.contourArea(contorno_mayor) > 2500:
+        if cv2.contourArea(contorno_mayor) > 2000:  # área mínima para evitar ruido
             x, y, w, h = cv2.boundingRect(contorno_mayor)
-            centro_x = x + w // 2
-            centro_y = y + h // 2
+            centro = (x + w // 2, y + h // 2)
+            historial.append(centro)
+
+            # Dibujar rectángulo y centro
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
-            cv2.circle(frame, (centro_x, centro_y), 2, (0, 0, 255), -1)
+            cv2.circle(frame, centro, 5, (0, 0, 255), -1)
 
-            # ver si el objeto (todo el rectngulo) esta dentro del limite
-            dentro = (x > 70 and x + w < 590)
-            if estaba_dentro and not dentro:
-                if x + w >= 590:
-                    direccion_actual = "Salida"
-                    cv2.line(frame, (590, 60), (590, 450), (0, 255, 0), 7) # el color es (0, 255, 0) y el grosor es el ultimo numero
-                elif x <= 70:
-                    direccion_actual = "Entrada"
-                    cv2.line(frame, (70, 60), (70, 450), (0, 255, 0), 7)
-            estaba_dentro = dentro
+            # Verificar cruce de línea con historial
+            if len(historial) >= 2:
+                x_prev = historial[0][0]
+                x_act = historial[-1][0]
 
-    # dibuja las zonas y muestra texto
-    cv2.drawContours(frame, [area], -1, (255, 0, 255), 2)
-    cv2.line(frame, (590, 60), (590, 450), (0, 255, 255), 2)
-    cv2.line(frame, (70, 60), (70, 450), (0, 255, 255), 2)
-    cv2.putText(frame, f"Direccion: {direccion_actual}", (20, 40), cv2.FONT_ITALIC, 0.7, (0, 0, 255), 2)
-    
-    cv2.imshow('prueba detector de direccion', frame)
-    if cv2.waitKey(50) & 0xFF == ord('q'):
+                if x_prev < linea_x - tolerancia and x_act > linea_x + tolerancia:
+                    entradas += 1
+                    historial.clear()  # evitar contar dos veces
+                elif x_prev > linea_x + tolerancia and x_act < linea_x - tolerancia:
+                    salidas += 1
+                    historial.clear()
+
+    # Dibujar línea y contadores
+    cv2.line(frame, (linea_x, 0), (linea_x, frame.shape[0]), (0, 255, 255), 2)
+    cv2.putText(frame, f"Entradas: {entradas}", (10, 40),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+    cv2.putText(frame, f"Salidas: {salidas}", (10, 70),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
+    # Mostrar
+    cv2.imshow("Detector Entrada/Salida", frame)
+    cv2.imshow("Mascara", fg)
+
+    key = cv2.waitKey(30) & 0xFF
+    if key == ord("q"):
         break
+    elif key == ord("r"):  # resetear el modelo de fondo
+        fondo = cv2.createBackgroundSubtractorMOG2(history=200, varThreshold=40, detectShadows=True)
+        print("Fondo reiniciado")
 
-    # Si se cierra la ventana con la X, sale también
-    if cv2.getWindowProperty('prueba detector de direccion', cv2.WND_PROP_VISIBLE) < 1:
-        break
-
-video.release()
+cap.release()
 cv2.destroyAllWindows()
