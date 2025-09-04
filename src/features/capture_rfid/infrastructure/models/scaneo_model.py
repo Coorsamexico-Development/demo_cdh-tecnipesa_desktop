@@ -12,6 +12,7 @@ class ScaneoModel:
         self.event_type = event_type
         self.tag_inventory_event = tag_inventory_event
         self.images:list = []
+        self.color = None
         self.direction = None
 
     #make a to dict method

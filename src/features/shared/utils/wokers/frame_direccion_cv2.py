@@ -23,9 +23,6 @@ class FrameCv2(QThread):
     frames = pyqtSignal((np.ndarray, object))
     directions = pyqtSignal(StateDirection)
 
-
-
-
     def __init__(self, 
                  camara:CamaraInfo, 
                  resolution:ResolutionInfo | None = None, 

@@ -34,6 +34,7 @@ class ScaneoItem(QFrame):
         self.label_antenna.setText(f"Antenna: {self._scaneo.tag_inventory_event.antenna_port}")
 
     def updateColor(self,color:str):
+        self._scaneo.color = color
         if color == 'red':
             self.setStyleSheet('background-color:#e55959')
             return

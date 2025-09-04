@@ -58,7 +58,7 @@ class CaptureRfidScreen(QWidget):
 
     def _result_worker_cdh(self, color:str, must_change:bool):
         if len(self.resp_colors) > 0:
-            QTimer.singleShot(1000, lambda: self.off_leds())
+            QTimer.singleShot(1000, lambda: self.clear_scaneos())
         if must_change:
             self.check_change_color(color)
 
@@ -83,8 +83,13 @@ class CaptureRfidScreen(QWidget):
         
         if len(self.list_scaneos_panel.list_scaneos) > 0:
             self.message_label.setText("Enviando...")
-            scaneoItem = self.list_scaneos_panel.list_scaneos[0]
-            scaneo = scaneoItem.scaneo
+            max_count = 0
+            scaneo = None
+            for scaneoItem in self.list_scaneos_panel.list_scaneos:
+                if scaneo is None or scaneo.color == 'blue' or scaneoItem.scaneo.count > max_count:
+                    max_count = scaneoItem.scaneo.count
+                    scaneo = scaneoItem.scaneo
+                    print(f"scaneo color {scaneo.color}")
             scaneo.images = self.panels_videos.save_frames()
             scaneo.direction = direction.value
 
@@ -116,7 +121,7 @@ class CaptureRfidScreen(QWidget):
         return self.panels_videos.save_frames()
     
     # apagado de los leds y reincio de los scaneos, respuesta de colores
-    def off_leds(self):
+    def clear_scaneos(self):
         self.change_color_timer_geo('off')
         self.list_scaneos_panel.clear_scaneos()
         self.resp_colors.clear()
